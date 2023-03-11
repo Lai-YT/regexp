@@ -1,3 +1,5 @@
+#include "../src/regexp.h"
+
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -9,14 +11,63 @@
 #include <cmocka.h>
 // clang-format on
 
-/* A test case that does nothing and succeeds. */
-static void null_test_success(void **state) {
-  (void)state; /* unused */
+static void test_re2post_concatenation(void** state) {
+  (void)state;
+  const char* re = "abba";
+  const char* post = "ab.b.a.";
+
+  const char* result = re2post(re);
+
+  assert_string_equal(result, post);
+}
+
+static void test_re2post_union(void** state) {
+  (void)state;
+  const char* re = "ab|ba";
+  const char* post = "ab.ba.|";
+
+  const char* result = re2post(re);
+
+  assert_string_equal(result, post);
+}
+
+static void test_re2post_concatenation_with_paren(void** state) {
+  (void)state;
+  const char* re = "a(bb)a";
+  const char* post = "abb..a.";
+
+  const char* result = re2post(re);
+
+  assert_string_equal(result, post);
+}
+
+static void test_re2post_union_with_parent(void** state) {
+  (void)state;
+  const char* re = "a(b|a)a";
+  const char* post = "aba|.a.";
+
+  const char* result = re2post(re);
+
+  assert_string_equal(result, post);
+}
+
+static void test_re2post_mix(void** state) {
+  (void)state;
+  const char* re = "a(bb)+a";
+  const char* post = "abb.+.a.";
+
+  const char* result = re2post(re);
+
+  assert_string_equal(result, post);
 }
 
 int main(void) {
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(null_test_success),
+      cmocka_unit_test(test_re2post_concatenation),
+      cmocka_unit_test(test_re2post_union),
+      cmocka_unit_test(test_re2post_concatenation_with_paren),
+      cmocka_unit_test(test_re2post_union_with_parent),
+      cmocka_unit_test(test_re2post_mix),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
