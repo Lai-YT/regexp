@@ -93,7 +93,7 @@ TEST_BINARY := $(BINARY)_test_runner
 
 # %.o file names
 NAMES := $(notdir $(basename $(wildcard $(SRCDIR)/*.$(SRCEXT))))
-OBJECTS :=$(patsubst %,$(LIBDIR)/%.o,$(NAMES))
+OBJECTS := $(patsubst %,$(LIBDIR)/%.o,$(NAMES))
 
 
 #
@@ -158,9 +158,9 @@ fmt:
 		$(SRCDIR)/*.{h,c}
 
 # Compile tests and run the test binary
-tests:
+tests: all
 	@echo -en "$(BROWN)CC $(END_COLOR)";
-	$(CC) $(TESTDIR)/main.c -o $(BINDIR)/$(TEST_BINARY) $(DEBUG) $(CFLAGS) $(LIBS) $(TEST_LIBS)
+	$(CC) $(TESTDIR)/main.c -o $(BINDIR)/$(TEST_BINARY) $(shell find $(LIBDIR) -name *.o ! -name main.o) $(DEBUG) $(CFLAGS) $(LIBS) $(TEST_LIBS)
 	@which ldconfig && ldconfig -C /tmp/ld.so.cache || true # caching the library linking
 	@echo -en "$(BROWN) Running tests: $(END_COLOR)";
 	./$(BINDIR)/$(TEST_BINARY)
