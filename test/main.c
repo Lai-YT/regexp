@@ -1,4 +1,4 @@
-#include "../src/regexp.h"
+#include "../src/re2post.h"
 
 #include <setjmp.h>
 #include <stdarg.h>
