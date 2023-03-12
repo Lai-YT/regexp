@@ -91,8 +91,8 @@ char* re2post(const char* re) {
         curr_paren_unit.num_of_union++;
         break;
       case ')':
-        if (!has_stashed_unit(paren_units, top_unit) ||
-            !has_unit_to_operate(curr_paren_unit)) {
+        if (!has_stashed_unit(paren_units, top_unit)
+            || !has_unit_to_operate(curr_paren_unit)) {
           return NULL;
         }
         // The current unit is about to complete, append the awaiting operators.
