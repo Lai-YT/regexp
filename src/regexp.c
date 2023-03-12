@@ -7,42 +7,48 @@
 #define MAX_NESTED_DEPTH 100
 #define EXPLICIT_CONCAT '.'
 
-/**
- * @brief operators eat up symbols immediately, while the two binary operators,
- * . and |, don't. Since the union operator is explicitly notated in the regular
- * expression, it's being counted.
- */
+/// @brief operators eat up symbols immediately, while the two binary operators,
+/// . and |, don't. Since the union operator is explicitly notated in the
+/// regular expression, it's being counted.
 typedef struct {
   int num_of_union;
   int num_of_unit;
 } unit_t;
 
-/**
- * @brief whether the buffer may overflow after adding explicit concatenation
- * symbols.
- */
+/// @brief whether the buffer may overflow after adding explicit concatenation
+/// symbols.
 static bool buf_may_overflow(const char* re);
 static bool has_too_many_nested_parens(const int depth);
+
 static bool has_unit_to_operate(unit_t unit);
 static bool has_units_to_concat(unit_t unit);
 static bool has_units_to_union(unit_t unit);
+
 static bool has_stashed_unit(unit_t* unit_stack, unit_t* top_unit);
 static void stash_unit(unit_t** unit_stack, unit_t unit);
 static void restore_unit(unit_t** unit_stack, unit_t* unit);
 static void init_unit(unit_t* unit);
 
-/**
- * @details Tracks the parentheses with a stack, and counts the number
- * of operation units so we know where to place an operator after every two
- * units. An operation unit can be a single symbol or a parenthesized set of
- * symbols/operators. Each parenthesized set of symbols/operators is treated
- * as a single unit after being converted.
- *
- * NOTE: Russ Cox uses while loops to append the concatenation operators in his
- * implementation. But there shouldn't be more than 1 pair of un-concatenated
- * units awaiting since concatenation is treated as left-associative, so an if
- * statement suffices.
- */
+/// @brief Tries to append a explicit concatenation operator to the result.
+/// @param unit records the number of concatenations awaiting.
+/// @param result appends the operator to.
+///
+/// @note Russ Cox uses while loops to append the concatenation operators in his
+/// implementation. But there shouldn't be more than 1 pair of un-concatenated
+/// units awaiting since concatenation is treated as left-associative, so an if
+/// statement suffices.
+static void try_append_concat(unit_t* unit, char** result);
+
+/// @brief Tries to append union operators to the result.
+/// @param unit records the number of unions awaiting.
+/// @param result appends the operator to.
+static void try_append_unions(unit_t* unit, char** result);
+
+/// @details Tracks the parentheses with a stack, and counts the number
+/// of operation units so we know where to place an operator after every two
+/// units. An operation unit can be a single symbol or a parenthesized set of
+/// symbols/operators. Each parenthesized set of symbols/operators is treated
+/// as a single unit after being converted.
 char* re2post(const char* re) {
   static char result[BUF_SIZE];
 
@@ -51,11 +57,10 @@ char* re2post(const char* re) {
   }
 
   char* result_tail = result;
-  /**
-   * @brief A stack. Stashing the nested parentheses units seen so far, so we
-   * can restore them after converting inner nested parenthesized units. Treat
-   * the converted unit as a single unit, and resume the conversion.
-   */
+
+  /// @brief A stack. Stashing the nested parentheses units seen so far, so we
+  /// can restore them after converting inner nested parenthesized units. Treat
+  /// the converted unit as a single unit, and resume the conversion.
   unit_t paren_units[MAX_NESTED_DEPTH];
   unit_t* top_unit = paren_units;  // it's in fact the one above the top
   unit_t curr_paren_unit;          // the unit that we're now converting
@@ -69,10 +74,8 @@ char* re2post(const char* re) {
         }
         // the previous units are converted first
         // because concatenation is left-associative,
-        if (has_units_to_concat(curr_paren_unit)) {
-          --curr_paren_unit.num_of_unit;
-          *result_tail++ = EXPLICIT_CONCAT;
-        }
+        try_append_concat(&curr_paren_unit, &result_tail);
+
         // a new parenthesized unit is now about to start,
         // stash the current one and move on
         stash_unit(&top_unit, curr_paren_unit);
@@ -84,10 +87,8 @@ char* re2post(const char* re) {
         }
         // the previous concatenations are converted first
         // because union has lower precedence than concatenation,
-        if (has_units_to_concat(curr_paren_unit)) {
-          --curr_paren_unit.num_of_unit;
-          *result_tail++ = EXPLICIT_CONCAT;
-        }
+        try_append_concat(&curr_paren_unit, &result_tail);
+
         curr_paren_unit.num_of_union++;
         break;
       case ')':
@@ -96,15 +97,9 @@ char* re2post(const char* re) {
           return NULL;
         }
         // The current unit is about to complete, append the awaiting operators.
-        if (has_units_to_concat(curr_paren_unit)) {
-          --curr_paren_unit.num_of_unit;
-          *result_tail++ = EXPLICIT_CONCAT;
-        }
-        while (has_units_to_union(curr_paren_unit)) {
-          --curr_paren_unit.num_of_union;
-          --curr_paren_unit.num_of_unit;
-          *result_tail++ = '|';
-        }
+        try_append_concat(&curr_paren_unit, &result_tail);
+        try_append_unions(&curr_paren_unit, &result_tail);
+
         // the current parenthesized unit is converted and becomes a single
         // unit. Restore the outer unit
         restore_unit(&top_unit, &curr_paren_unit);
@@ -123,10 +118,8 @@ char* re2post(const char* re) {
       default:
         // the previous units are converted first
         // because concatenation is left-associative
-        if (has_units_to_concat(curr_paren_unit)) {
-          --curr_paren_unit.num_of_unit;
-          *result_tail++ = EXPLICIT_CONCAT;
-        }
+        try_append_concat(&curr_paren_unit, &result_tail);
+
         *result_tail++ = *re;
         curr_paren_unit.num_of_unit++;
         break;
@@ -136,15 +129,9 @@ char* re2post(const char* re) {
     return NULL;  // unmatched parentheses
   }
   // The conversion is about to complete, append the awaiting operators.
-  if (has_units_to_concat(curr_paren_unit)) {
-    --curr_paren_unit.num_of_unit;
-    *result_tail++ = EXPLICIT_CONCAT;
-  }
-  while (has_units_to_union(curr_paren_unit)) {
-    --curr_paren_unit.num_of_union;
-    --curr_paren_unit.num_of_unit;
-    *result_tail++ = '|';
-  }
+  try_append_concat(&curr_paren_unit, &result_tail);
+  try_append_unions(&curr_paren_unit, &result_tail);
+
   *result_tail = '\0';
   return result;
 }
@@ -174,15 +161,33 @@ static bool has_too_many_nested_parens(const int depth) {
   return depth > MAX_NESTED_DEPTH;
 }
 
+static void try_append_concat(unit_t* unit, char** result) {
+  if (has_units_to_concat(*unit)) {
+    --unit->num_of_unit;
+    **result = EXPLICIT_CONCAT;
+    (*result)++;
+  }
+}
+static void try_append_unions(unit_t* unit, char** result) {
+  while (has_units_to_union(*unit)) {
+    --unit->num_of_union;
+    --unit->num_of_unit;
+    **result = '|';
+    (*result)++;
+  }
+}
+
 static bool has_unit_to_operate(unit_t unit) {
   return unit.num_of_unit > 0;
 }
 
 static bool has_units_to_concat(unit_t unit) {
+  // binary operator needs at least 2 units
   return unit.num_of_unit - unit.num_of_union >= 2;
 }
 
 static bool has_units_to_union(unit_t unit) {
+  // binary operator needs at least 2 units
   return unit.num_of_union >= 1 && unit.num_of_unit >= 2;
 }
 
