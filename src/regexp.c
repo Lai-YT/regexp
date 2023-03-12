@@ -7,11 +7,14 @@
 #define MAX_NESTED_DEPTH 100
 #define EXPLICIT_CONCAT '.'
 
-// Unary operators eat up symbols immediately, while the two binary operators, .
-// and |, don't. We have to count them and transform them when it's time.
+/**
+ * @brief operators eat up symbols immediately, while the two binary operators,
+ * . and |, don't. Since the union operator is explicitly notated in the regular
+ * expression, it's being counted.
+ */
 typedef struct {
-  int num_to_union;
-  int num_to_concat;
+  int num_of_union;
+  int num_of_unit;
 } unit_t;
 
 /**
@@ -28,43 +31,50 @@ static void stash_unit(unit_t** unit_stack, unit_t unit);
 static void restore_unit(unit_t** unit_stack, unit_t* unit);
 static void init_unit(unit_t* unit);
 
+/**
+ * @details Tracks the parentheses with a stack, and counts the number
+ * of operation units so we know where to place an operator after every two
+ * units. An operation unit can be a single symbol or a parenthesized set of
+ * symbols/operators. Each parenthesized set of symbols/operators is treated
+ * as a single unit after being converted.
+ *
+ * NOTE: Russ Cox uses while loops to append the concatenation operators in his
+ * implementation. But there shouldn't be more than 1 pair of un-concatenated
+ * units awaiting since concatenation is treated as left-associative, so an if
+ * statement suffices.
+ */
 char* re2post(const char* re) {
-  static char buf[BUF_SIZE];
-  char* buf_top = buf;
-
-  /*
-   * We are to track the parentheses with a stack, and counts the number of
-   * operation units so we know where to place an operator after every two
-   * units. An operation units can be a single symbol or a parenthesized set of
-   * symbols/operators. Each parenthesized set of symbols/operators is treated
-   * as a single unit after being transformed.
-   */
-
-  // paren_units works as a stack. Stashing the nested parentheses units seen
-  // so far, so we can restore them after transforming inner nested
-  // parenthesized units. Treat the transformed unit as a single unit, and
-  // resume the transformation.
-  unit_t paren_units[MAX_NESTED_DEPTH];
-  unit_t* top_unit = paren_units;  // it's in fact the one above the top
-  unit_t curr_paren_unit = {.num_to_union = 0, .num_to_concat = 0};
+  static char result[BUF_SIZE];
 
   if (buf_may_overflow(re)) {
     return NULL;
   }
+
+  char* result_tail = result;
+  /**
+   * @brief A stack. Stashing the nested parentheses units seen so far, so we
+   * can restore them after converting inner nested parenthesized units. Treat
+   * the converted unit as a single unit, and resume the conversion.
+   */
+  unit_t paren_units[MAX_NESTED_DEPTH];
+  unit_t* top_unit = paren_units;  // it's in fact the one above the top
+  unit_t curr_paren_unit;          // the unit that we're now converting
+  init_unit(&curr_paren_unit);
+
   for (; *re; re++) {
     switch (*re) {
       case '(':
         if (has_too_many_nested_parens(top_unit - paren_units)) {
           return NULL;
         }
-        // because concatenation is left associative, the previous units are
-        // transformed first
+        // the previous units are converted first
+        // because concatenation is left-associative,
         if (has_units_to_concat(curr_paren_unit)) {
-          --curr_paren_unit.num_to_concat;
-          *buf_top++ = EXPLICIT_CONCAT;
+          --curr_paren_unit.num_of_unit;
+          *result_tail++ = EXPLICIT_CONCAT;
         }
-        // after the transformation, stash it, and move on the new parenthesized
-        // unit
+        // a new parenthesized unit is now about to start,
+        // stash the current one and move on
         stash_unit(&top_unit, curr_paren_unit);
         init_unit(&curr_paren_unit);
         break;
@@ -72,34 +82,33 @@ char* re2post(const char* re) {
         if (!has_unit_to_operate(curr_paren_unit)) {
           return NULL;
         }
-        // union has lower precedence than concatenation,
-        // so the previous concatenations are transformed first
-        while (has_units_to_concat(curr_paren_unit)) {
-          --curr_paren_unit.num_to_concat;
-          *buf_top++ = EXPLICIT_CONCAT;
+        // the previous concatenations are converted first
+        // because union has lower precedence than concatenation,
+        if (has_units_to_concat(curr_paren_unit)) {
+          --curr_paren_unit.num_of_unit;
+          *result_tail++ = EXPLICIT_CONCAT;
         }
-        // the previous unit is to be ​unionized instead of concatenated
-        curr_paren_unit.num_to_concat--;
-        curr_paren_unit.num_to_union++;
-        // another addition for the current unit
-        curr_paren_unit.num_to_union++;
+        curr_paren_unit.num_of_union++;
         break;
       case ')':
         if (!has_stashed_unit(paren_units, top_unit) ||
             !has_unit_to_operate(curr_paren_unit)) {
           return NULL;
         }
+        // The current unit is about to complete, append the awaiting operators.
         if (has_units_to_concat(curr_paren_unit)) {
-          --curr_paren_unit.num_to_concat;
-          *buf_top++ = EXPLICIT_CONCAT;
+          --curr_paren_unit.num_of_unit;
+          *result_tail++ = EXPLICIT_CONCAT;
         }
         while (has_units_to_union(curr_paren_unit)) {
-          --curr_paren_unit.num_to_union;
-          *buf_top++ = '|';
+          --curr_paren_unit.num_of_union;
+          --curr_paren_unit.num_of_unit;
+          *result_tail++ = '|';
         }
-        // the nested parenthesized unit is transformed, restore
+        // the current parenthesized unit is converted and becomes a single
+        // unit. Restore the outer unit
         restore_unit(&top_unit, &curr_paren_unit);
-        curr_paren_unit.num_to_concat++;
+        curr_paren_unit.num_of_unit++;
         break;
       case '*':
       case '+':
@@ -109,37 +118,39 @@ char* re2post(const char* re) {
         }
         // unary left-associative with highest precedence,
         // append right next to the previous unit
-        *buf_top++ = *re;
+        *result_tail++ = *re;
         break;
       default:
-        // because concatenation is left associative,
-        // the previous units are transformed first
+        // the previous units are converted first
+        // because concatenation is left-associative
         if (has_units_to_concat(curr_paren_unit)) {
-          --curr_paren_unit.num_to_concat;
-          *buf_top++ = EXPLICIT_CONCAT;
+          --curr_paren_unit.num_of_unit;
+          *result_tail++ = EXPLICIT_CONCAT;
         }
-        *buf_top++ = *re;
-        curr_paren_unit.num_to_concat++;
+        *result_tail++ = *re;
+        curr_paren_unit.num_of_unit++;
         break;
     }
   }
   if (has_stashed_unit(paren_units, top_unit)) {
     return NULL;  // unmatched parentheses
   }
+  // The conversion is about to complete, append the awaiting operators.
   if (has_units_to_concat(curr_paren_unit)) {
-    --curr_paren_unit.num_to_concat;
-    *buf_top++ = EXPLICIT_CONCAT;
+    --curr_paren_unit.num_of_unit;
+    *result_tail++ = EXPLICIT_CONCAT;
   }
   while (has_units_to_union(curr_paren_unit)) {
-    --curr_paren_unit.num_to_union;
-    *buf_top++ = '|';
+    --curr_paren_unit.num_of_union;
+    --curr_paren_unit.num_of_unit;
+    *result_tail++ = '|';
   }
-  *buf_top = '\0';
-  return buf;
+  *result_tail = '\0';
+  return result;
 }
 
 static void init_unit(unit_t* unit) {
-  *unit = (unit_t){.num_to_union = 0, .num_to_concat = 0};
+  *unit = (unit_t){.num_of_union = 0, .num_of_unit = 0};
 }
 
 static void stash_unit(unit_t** unit_stack, unit_t unit) {
@@ -164,15 +175,15 @@ static bool has_too_many_nested_parens(const int depth) {
 }
 
 static bool has_unit_to_operate(unit_t unit) {
-  return unit.num_to_concat > 0;
+  return unit.num_of_unit > 0;
 }
 
 static bool has_units_to_concat(unit_t unit) {
-  return unit.num_to_concat >= 2;
+  return unit.num_of_unit - unit.num_of_union >= 2;
 }
 
 static bool has_units_to_union(unit_t unit) {
-  return unit.num_to_union >= 2;
+  return unit.num_of_union >= 1 && unit.num_of_unit >= 2;
 }
 
 static bool has_stashed_unit(unit_t* unit_stack, unit_t* top_unit) {
