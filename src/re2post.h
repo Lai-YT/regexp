@@ -1,3 +1,6 @@
+#ifndef RE2POST_H
+#define RE2POST_H
+
 #ifndef EXPLICIT_CONCAT
 #define EXPLICIT_CONCAT '.'
 #endif
@@ -10,3 +13,5 @@
 /// postfix notation isn't unique. This function has concatenation and union
 /// operator be left and right-associative, respectively.
 char* re2post(const char* re);
+
+#endif /* end of include guard: RE2POST_H */
