@@ -17,7 +17,7 @@ int main(void) {
       cmocka_unit_test(test_re2post_union),
       cmocka_unit_test(test_re2post_paren),
       cmocka_unit_test(test_re2post_union_and_concat),
-      cmocka_unit_test(test_re2post_concatenation_with_paren),
+      cmocka_unit_test(test_re2post_concat_with_paren),
       cmocka_unit_test(test_re2post_union_with_paren),
       cmocka_unit_test(test_re2post_mix),
   };
