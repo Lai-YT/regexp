@@ -21,6 +21,17 @@ int main(void) {
       cmocka_unit_test(test_re2post_concat_with_paren),
       cmocka_unit_test(test_re2post_union_with_paren),
       cmocka_unit_test(test_re2post_mix),
+      cmocka_unit_test(test_create_labeled_state),
+      cmocka_unit_test(test_create_epsilon_state),
+      cmocka_unit_test(test_create_accepting_state),
+      cmocka_unit_test(test_create_nfa),
+      cmocka_unit_test(test_post2nfa_concat_only),
+      cmocka_unit_test(test_post2nfa_union_only_single),
+      cmocka_unit_test(test_post2nfa_union_only_complex),
+      cmocka_unit_test(test_post2nfa_zero_or_more),
+      cmocka_unit_test(test_post2nfa_zero_or_one),
+      cmocka_unit_test(test_post2nfa_one_or_more),
+      cmocka_unit_test(test_post2nfa_mix),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
