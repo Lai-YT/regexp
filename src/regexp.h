@@ -37,4 +37,9 @@ Nfa* create_nfa(State* start, State* accept);
 
 Nfa* post2nfa(const char* post);
 
+/// @brief Merges b into a, which connects the outs of b to a.
+/// @param a The state to be replace. It's contents will be lost.
+/// @param b The state to replace with.
+void merge_state(State* a, State* b);
+
 #endif /* end of include guard: REGEXP_H */

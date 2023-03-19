@@ -46,11 +46,7 @@ Nfa* post2nfa(const char* post) {
       case '.': {
         Nfa* n2 = POP();
         Nfa* n1 = POP();
-        // NOTE: the original algorithm fuses the accept state of n1 with the
-        // start state of n2 while here we don't, which leads to an extra
-        // epsilon transition.
-        n1->accept->label = EPSILON;
-        n1->accept->outs[0] = n2->start;
+        merge_state(n1->accept, n2->start);
         PUSH(create_nfa(n1->start, n2->accept));
       } break;
       case '|': {
@@ -70,12 +66,8 @@ Nfa* post2nfa(const char* post) {
         State* accept = create_state(ACCEPT, NULL);
         State* outs[2] = {n->start, accept};
         State* start = create_state(SPLIT, outs);
-        // NOTE: the original algorithm fuses the accept state of n with
-        // come_back while here we don't, which leads to an extra epsilon
-        // transition.
         State* come_back = create_state(SPLIT, start->outs);
-        n->accept->label = EPSILON;
-        n->accept->outs[0] = come_back;
+        merge_state(n->accept, come_back);
         PUSH(create_nfa(start, accept));
       } break;
       case '?': {
@@ -92,8 +84,7 @@ Nfa* post2nfa(const char* post) {
         State* accept = create_state(ACCEPT, NULL);
         State* outs[2] = {n->start, accept};
         State* come_back = create_state(SPLIT, outs);
-        n->accept->label = EPSILON;
-        n->accept->outs[0] = come_back;
+        merge_state(n->accept, come_back);
         PUSH(create_nfa(n->start, accept));
       } break;
       default: {
@@ -110,4 +101,9 @@ Nfa* post2nfa(const char* post) {
 #undef IS_EMPTY
 #undef POP
 #undef PUSH
+}
+
+void merge_state(State* a, State* b) {
+  a->label = b->label;
+  a->outs = b->outs;
 }

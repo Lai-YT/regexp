@@ -58,11 +58,7 @@ void test_post2nfa_concat_only() {
   State* s = nfa->start;
   assert_int_equal(s->label, 'a');
   s = s->outs[0];
-  assert_int_equal(s->label, EPSILON);
-  s = s->outs[0];
   assert_int_equal(s->label, 'b');
-  s = s->outs[0];
-  assert_int_equal(s->label, EPSILON);
   s = s->outs[0];
   assert_int_equal(s->label, 'c');
   s = s->outs[0];
@@ -149,8 +145,6 @@ static void test_post2nfa_zero_or_more() {
     State* a = s->outs[0];
     assert_int_equal(a->label, 'a');
     State* t = a->outs[0];
-    assert_int_equal(t->label, EPSILON);
-    t = t->outs[0];
     assert_int_equal(t->label, SPLIT);
     {
       State* u = t->outs[0];
@@ -198,8 +192,6 @@ static void test_post2nfa_one_or_more() {
   State* a = nfa->start;
   assert_int_equal(a->label, 'a');
   State* t = a->outs[0];
-  assert_int_equal(t->label, EPSILON);
-  t = t->outs[0];
   assert_int_equal(t->label, SPLIT);
   {
     State* u = t->outs[0];
@@ -220,8 +212,6 @@ static void test_post2nfa_mix() {
   State* s = nfa->start;
   assert_int_equal(s->label, 'a');
   s = s->outs[0];
-  assert_int_equal(s->label, EPSILON);
-  s = s->outs[0];
   assert_int_equal(s->label, SPLIT);
   {
     State* t = s->outs[0];
@@ -230,8 +220,6 @@ static void test_post2nfa_mix() {
       State* a = t->outs[0];
       assert_int_equal(a->label, 'b');
       State* u = a->outs[0];
-      assert_int_equal(u->label, EPSILON);
-      u = u->outs[0];
       assert_int_equal(u->label, SPLIT);
       {
         State* v = u->outs[0];
