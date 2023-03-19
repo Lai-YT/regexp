@@ -11,7 +11,7 @@
 #include <cmocka.h>
 // clang-format on
 
-void test_create_labeled_state() {
+static void test_create_labeled_state() {
   const int label = 100;
   State out;  // ill-formed but doesn't matter
   State* outs[] = {&out};
@@ -22,7 +22,7 @@ void test_create_labeled_state() {
   assert_ptr_equal(labeled_state->outs[0], outs[0]);
 }
 
-void test_create_epsilon_state() {
+static void test_create_epsilon_state() {
   State out1, out2;  // ill-formed but doesn't matter
   State* outs[] = {&out1, &out2};
 
@@ -33,14 +33,14 @@ void test_create_epsilon_state() {
   assert_ptr_equal(epsilon_state->outs[1], &out2);
 }
 
-void test_create_accepting_state() {
+static void test_create_accepting_state() {
   State* accepting_state = create_state(ACCEPT, NULL);
 
   assert_int_equal(accepting_state->label, ACCEPT);
   assert_null(accepting_state->outs[0]);
 }
 
-void test_create_nfa() {
+static void test_create_nfa() {
   State start, accept;  // ill-formed but doesn't matter
 
   Nfa* nfa = create_nfa(&start, &accept);
@@ -49,7 +49,7 @@ void test_create_nfa() {
   assert_ptr_equal(nfa->accept, &accept);
 }
 
-void test_post2nfa_concat_only() {
+static void test_post2nfa_concat_only() {
   const char* post = "ab.c.";
 
   Nfa* nfa = post2nfa(post);
@@ -67,7 +67,7 @@ void test_post2nfa_concat_only() {
 
 // TODO: refactor tests
 
-void test_post2nfa_union_only_single() {
+static void test_post2nfa_union_only_single() {
   const char* post = "ab|";
 
   Nfa* nfa = post2nfa(post);
@@ -93,7 +93,7 @@ void test_post2nfa_union_only_single() {
   }
 }
 
-void test_post2nfa_union_only_complex() {
+static void test_post2nfa_union_only_complex() {
   const char* post = "abc||";
 
   Nfa* nfa = post2nfa(post);
