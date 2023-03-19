@@ -1,9 +1,10 @@
-#include "re2post.h"
-
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
+
+#include "re2post.h"
+#include "regexp.h"
 
 // clang-format off
 // cmocka allows test applications to use custom definitions of C standard

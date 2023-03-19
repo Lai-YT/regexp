@@ -1,7 +1,7 @@
-#include "re2post.h"
-
 #include <stdbool.h>
 #include <string.h>
+
+#include "re2post.h"
 
 #define BUF_SIZE 8000
 #define MAX_NESTED_DEPTH 100
@@ -91,8 +91,8 @@ char* re2post(const char* re) {
         curr_paren_unit.num_of_union++;
         break;
       case ')':
-        if (!has_stashed_unit(paren_units, top_unit)
-            || !has_unit_to_operate(curr_paren_unit)) {
+        if (!has_stashed_unit(paren_units, top_unit) ||
+            !has_unit_to_operate(curr_paren_unit)) {
           return NULL;
         }
         // The current unit is about to complete, append the awaiting operators.
@@ -176,9 +176,7 @@ static void try_append_unions(unit_t* unit, char** result) {
   }
 }
 
-static bool has_unit_to_operate(unit_t unit) {
-  return unit.num_of_unit > 0;
-}
+static bool has_unit_to_operate(unit_t unit) { return unit.num_of_unit > 0; }
 
 static bool has_units_to_concat(unit_t unit) {
   // binary operator needs at least 2 units
