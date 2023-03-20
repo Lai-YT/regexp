@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "post2nfa.h"
 #include "re2post.h"
 #include "regexp.h"
 
