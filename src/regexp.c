@@ -2,7 +2,14 @@
 #include <stdlib.h>
 
 #include "list.h"
+#include "re2post.h"
 #include "regexp.h"
+
+bool regexp(const char* re, const char* s) {
+  const char* post = re2post(re);
+  const Nfa* nfa = post2nfa(post);
+  return accepted(nfa, s);
+}
 
 State* create_state(const int label, State** outs) {
   State* new_state;
@@ -126,6 +133,14 @@ void merge_state(State* a, State* b) {
   a->outs = b->outs;
 }
 
+bool accepted(const Nfa* nfa, const char* s) {
+  List* states = epsilon_closure(create_list(nfa->start));
+  for (; *s; s++) {
+    states = epsilon_closure(move(states, *s));
+  }
+  return has_accept(states);
+}
+
 bool contains(List* l, void* val) {
   for (; l; l = l->next) {
     if (val == l->val) {
@@ -169,4 +184,28 @@ List* epsilon_closure(List* start) {
 
 #undef POP
 #undef PUSH
+}
+
+List* move(List* l, char c) {
+  List* outs = NULL;
+  for (; l; l = l->next) {
+    State* s = l->val;
+    if (s->label == c) {
+      // appending is not safe since outs may be NULL, so prepends
+      List* tmp = create_list(s->outs[0]);
+      append_list(tmp, outs);
+      outs = tmp;
+    }
+  }
+  return outs;
+}
+
+bool has_accept(List* l) {
+  for (; l; l = l->next) {
+    State* s = l->val;
+    if (s->label == ACCEPT) {
+      return true;
+    }
+  }
+  return false;
 }
