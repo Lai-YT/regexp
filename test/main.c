@@ -40,7 +40,7 @@ int main(void) {
       cmocka_unit_test(test_epsilon_closure_duplicate),
       cmocka_unit_test(test_move_should_be_one_hop_only),
       cmocka_unit_test(test_move_null),
-      cmocka_unit_test(test_simulate),
+      cmocka_unit_test(test_accepted),
       cmocka_unit_test(test_all_regexp),
   };
 

@@ -339,7 +339,7 @@ static void test_move_null() {
   assert_null(moves);
 }
 
-static void test_simulate() {
+static void test_accepted() {
   // a -> b -> accept
   State* accept = create_state(ACCEPT, NULL);
   State* b = create_state('b', &accept);
