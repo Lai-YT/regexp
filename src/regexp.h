@@ -42,4 +42,8 @@ Nfa* post2nfa(const char* post);
 /// @param b The state to replace with.
 void merge_state(State* a, State* b);
 
+/// @brief Returns the states that are reachable from start with only epsilon
+/// transitions, including start itself.
+List* epsilon_closure(List* start);
+
 #endif /* end of include guard: REGEXP_H */

@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "../src/list.h"
 #include "../src/regexp.h"
 
 // clang-format off
@@ -255,4 +256,65 @@ static void test_missing_operator_should_return_null() {
 static void test_missing_operand_should_return_null() {
   assert_null(post2nfa("a."));
   assert_null(post2nfa("*"));
+}
+
+static void test_epsilon_closure_on_epsilon() {
+  State* s = create_state(ACCEPT, NULL);
+  State* start = create_state(EPSILON, &s);
+  List* l = create_list(start);
+
+  List* closure = epsilon_closure(l);
+
+  assert_ptr_equal(closure->val, start);
+  closure = closure->next;
+  assert_ptr_equal(closure->val, s);
+}
+
+static void test_epsilon_closure_on_split() {
+  State* s1 = create_state(ACCEPT, NULL);
+  State* s2 = create_state(ACCEPT, NULL);
+  State* outs[2] = {s1, s2};
+  State* start = create_state(SPLIT, outs);
+  List* l = create_list(start);
+
+  List* closure = epsilon_closure(l);
+
+  assert_ptr_equal(closure->val, start);
+  closure = closure->next;
+  assert_ptr_equal(closure->val, s1);
+  closure = closure->next;
+  assert_ptr_equal(closure->val, s2);
+}
+
+static void test_epsilon_closure_on_chain() {
+  State* s2 = create_state(ACCEPT, NULL);
+  State* s1 = create_state(EPSILON, &s2);
+  State* start = create_state(EPSILON, &s1);
+  List* l = create_list(start);
+
+  List* closure = epsilon_closure(l);
+
+  assert_ptr_equal(closure->val, start);
+  closure = closure->next;
+  assert_ptr_equal(closure->val, s1);
+  closure = closure->next;
+  assert_ptr_equal(closure->val, s2);
+}
+
+static void test_epsilon_closure_duplicate() {
+  State* s2 = create_state(ACCEPT, NULL);
+  State* s1 = create_state(EPSILON, &s2);
+  State* start = create_state(EPSILON, &s1);
+  // introduce an epsilon loop
+  s2->label = EPSILON;
+  s2->outs[0] = start;
+  List* l = create_list(start);
+
+  List* closure = epsilon_closure(l);
+
+  assert_ptr_equal(closure->val, start);
+  closure = closure->next;
+  assert_ptr_equal(closure->val, s1);
+  closure = closure->next;
+  assert_ptr_equal(closure->val, s2);
 }

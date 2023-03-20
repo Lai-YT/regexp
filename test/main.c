@@ -34,6 +34,10 @@ int main(void) {
       cmocka_unit_test(test_post2nfa_mix),
       cmocka_unit_test(test_missing_operator_should_return_null),
       cmocka_unit_test(test_missing_operand_should_return_null),
+      cmocka_unit_test(test_epsilon_closure_on_epsilon),
+      cmocka_unit_test(test_epsilon_closure_on_split),
+      cmocka_unit_test(test_epsilon_closure_on_chain),
+      cmocka_unit_test(test_epsilon_closure_duplicate),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
