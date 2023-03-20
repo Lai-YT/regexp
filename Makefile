@@ -155,7 +155,7 @@ valgrind:
 fmt:
 	@clang-format -i \
 		-style=file \
-		$(SRCDIR)/*.{h,c}
+		{$(SRCDIR),$(TESTDIR)}/*.{h,c}
 
 # Compile tests and run the test binary
 tests: all

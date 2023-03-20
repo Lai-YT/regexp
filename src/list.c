@@ -1,6 +1,6 @@
-#include <stdlib.h>
-
 #include "list.h"
+
+#include <stdlib.h>
 
 List* create_list(void* val) {
   List* l;

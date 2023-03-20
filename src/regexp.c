@@ -1,9 +1,10 @@
+#include "regexp.h"
+
 #include <stdbool.h>
 #include <stdlib.h>
 
 #include "list.h"
 #include "re2post.h"
-#include "regexp.h"
 
 bool regexp(const char* re, const char* s) {
   const char* post = re2post(re);
