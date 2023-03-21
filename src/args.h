@@ -20,15 +20,15 @@
 #include <getopt.h>
 #include <stdbool.h>
 
-/* Max size of a file name */
-#define FILE_NAME_SIZE 512
+#define BUF_SIZE 100
 
 /* Defines the command line allowed options struct */
 struct options {
   bool help;
   bool version;
   bool use_colors;
-  char file_name[FILE_NAME_SIZE];
+  char regexp[BUF_SIZE];
+  char string[BUF_SIZE];
 };
 
 /* Exports options as a global type */

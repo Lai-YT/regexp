@@ -61,17 +61,21 @@ void switch_options(int arg, options_t* options) {
   }
 }
 
-/*
- * Tries to get the file name. Otherwise, gets stdin
- */
-void get_file_name(int argc, char* argv[], options_t* options) {
-  /* If there is more arguments, probably, it is an input file */
+void get_regexp(int argc, char* argv[], options_t* options) {
   if (optind < argc) {
-    strncpy(options->file_name, argv[optind++], FILE_NAME_SIZE);
-
-    /* Otherwise, assumes stdin as the input file */
+    strncpy(options->regexp, argv[optind++], BUF_SIZE);
   } else {
-    strncpy(options->file_name, "-", FILE_NAME_SIZE);
+    usage();
+    exit(EXIT_FAILURE);
+  }
+}
+
+void get_string(int argc, char* argv[], options_t* options) {
+  if (optind < argc) {
+    strncpy(options->string, argv[optind++], BUF_SIZE);
+  } else {
+    usage();
+    exit(EXIT_FAILURE);
   }
 }
 
@@ -92,7 +96,7 @@ void options_parser(int argc, char* argv[], options_t* options) {
 
   while (true) {
     int option_index = 0;
-    arg = getopt_long(argc, argv, "hvt:", long_options, &option_index);
+    arg = getopt_long(argc, argv, "hv", long_options, &option_index);
 
     /* End of the options? */
     if (arg == -1) break;
@@ -101,6 +105,7 @@ void options_parser(int argc, char* argv[], options_t* options) {
     switch_options(arg, options);
   }
 
-  /* Gets the file name or exits with error */
-  get_file_name(argc, argv, options);
+  /* Gets the regular expression and string or exits with error */
+  get_regexp(argc, argv, options);
+  get_string(argc, argv, options);
 }

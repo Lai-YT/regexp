@@ -38,7 +38,7 @@ void help() {
  */
 void usage() {
   fprintf(stdout, YELLOW "Usage: " NO_COLOR);
-  fprintf(stdout, "%s [options] input file\n\n", __PROGRAM_NAME__);
+  fprintf(stdout, "%s [options] [regexp string]\n\n", __PROGRAM_NAME__);
 }
 
 /*

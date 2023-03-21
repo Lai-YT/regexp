@@ -29,7 +29,8 @@ int main(int argc, char* argv[]) {
   fprintf(stdout, YELLOW "help: %d\n" NO_COLOR, options.help);
   fprintf(stdout, YELLOW "version: %d\n" NO_COLOR, options.version);
   fprintf(stdout, YELLOW "use colors: %d\n" NO_COLOR, options.use_colors);
-  fprintf(stdout, YELLOW "filename: %s\n" NO_COLOR, options.file_name);
+  fprintf(stdout, YELLOW "regexp: %s\n" NO_COLOR, options.regexp);
+  fprintf(stdout, YELLOW "string: %s\n" NO_COLOR, options.string);
 #endif
 
   /* Do your magic here :) */
