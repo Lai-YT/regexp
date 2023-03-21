@@ -20,8 +20,10 @@ static void test_epsilon_closure_on_epsilon() {
   List* closure = epsilon_closure(l);
 
   assert_ptr_equal(closure->val, start);
-  closure = closure->next;
-  assert_ptr_equal(closure->val, s);
+  assert_ptr_equal(closure->next->val, s);
+
+  delete_list(closure);
+  delete_list(l);
 }
 
 static void test_epsilon_closure_on_split() {
@@ -34,10 +36,11 @@ static void test_epsilon_closure_on_split() {
   List* closure = epsilon_closure(l);
 
   assert_ptr_equal(closure->val, start);
-  closure = closure->next;
-  assert_ptr_equal(closure->val, s1);
-  closure = closure->next;
-  assert_ptr_equal(closure->val, s2);
+  assert_ptr_equal(closure->next->val, s1);
+  assert_ptr_equal(closure->next->next->val, s2);
+
+  delete_list(closure);
+  delete_list(l);
 }
 
 static void test_epsilon_closure_on_chain() {
@@ -49,10 +52,11 @@ static void test_epsilon_closure_on_chain() {
   List* closure = epsilon_closure(l);
 
   assert_ptr_equal(closure->val, start);
-  closure = closure->next;
-  assert_ptr_equal(closure->val, s1);
-  closure = closure->next;
-  assert_ptr_equal(closure->val, s2);
+  assert_ptr_equal(closure->next->val, s1);
+  assert_ptr_equal(closure->next->next->val, s2);
+
+  delete_list(closure);
+  delete_list(l);
 }
 
 static void test_epsilon_closure_duplicate() {
@@ -67,10 +71,11 @@ static void test_epsilon_closure_duplicate() {
   List* closure = epsilon_closure(l);
 
   assert_ptr_equal(closure->val, start);
-  closure = closure->next;
-  assert_ptr_equal(closure->val, s1);
-  closure = closure->next;
-  assert_ptr_equal(closure->val, s2);
+  assert_ptr_equal(closure->next->val, s1);
+  assert_ptr_equal(closure->next->next->val, s2);
+
+  delete_list(closure);
+  delete_list(l);
 }
 
 static void test_move_should_be_one_hop_only() {
@@ -78,9 +83,13 @@ static void test_move_should_be_one_hop_only() {
   State* accept = create_state(ACCEPT, NULL);
   State* a2 = create_state('a', &accept);
   State* a1 = create_state('a', &a2);
+  List* l = create_list(a1);
 
-  List* moves = move(create_list(a1), 'a');
+  List* moves = move(l, 'a');
   assert_ptr_equal(moves->val, a2);
+
+  delete_list(moves);
+  delete_list(l);
 }
 
 static void test_move_null() {
@@ -88,9 +97,13 @@ static void test_move_null() {
   State* accept = create_state(ACCEPT, NULL);
   State* b = create_state('b', &accept);
   State* a = create_state('a', &b);
+  List* l = create_list(a);
 
-  List* moves = move(create_list(a), 'c');
+  List* moves = move(l, 'c');
   assert_null(moves);
+
+  delete_list(moves);
+  delete_list(l);
 }
 
 static void test_accepted() {
