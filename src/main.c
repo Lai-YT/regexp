@@ -18,6 +18,7 @@
 
 #include "args.h"
 #include "colors.h"
+#include "regexp.h"
 
 int main(int argc, char* argv[]) {
   /* Read command line options */
@@ -33,7 +34,8 @@ int main(int argc, char* argv[]) {
   fprintf(stdout, YELLOW "string: %s\n" NO_COLOR, options.string);
 #endif
 
-  /* Do your magic here :) */
-
-  return EXIT_SUCCESS;
+  if (regexp(options.regexp, options.string)) {
+    return 0;
+  }
+  return 1;
 }
