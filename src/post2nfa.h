@@ -23,6 +23,8 @@ typedef struct State {
 /// reserved.
 State* create_state(const int label, State** outs);
 
+void delete_state(State*);
+
 typedef struct Nfa {
   State* start;
   State* accept;

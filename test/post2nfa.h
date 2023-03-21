@@ -20,6 +20,8 @@ static void test_create_labeled_state() {
 
   assert_int_equal(labeled_state->label, label);
   assert_ptr_equal(labeled_state->outs[0], outs[0]);
+
+  delete_state(labeled_state);
 }
 
 static void test_create_epsilon_state() {
@@ -31,6 +33,8 @@ static void test_create_epsilon_state() {
   assert_int_equal(epsilon_state->label, SPLIT);
   assert_ptr_equal(epsilon_state->outs[0], &out1);
   assert_ptr_equal(epsilon_state->outs[1], &out2);
+
+  delete_state(epsilon_state);
 }
 
 static void test_create_accepting_state() {
@@ -38,6 +42,8 @@ static void test_create_accepting_state() {
 
   assert_int_equal(accepting_state->label, ACCEPT);
   assert_null(accepting_state->outs[0]);
+
+  delete_state(accepting_state);
 }
 
 static void test_create_nfa() {

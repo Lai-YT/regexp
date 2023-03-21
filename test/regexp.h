@@ -24,6 +24,8 @@ static void test_epsilon_closure_on_epsilon() {
 
   delete_list(closure);
   delete_list(l);
+  delete_state(start);
+  delete_state(s);
 }
 
 static void test_epsilon_closure_on_split() {
@@ -41,6 +43,9 @@ static void test_epsilon_closure_on_split() {
 
   delete_list(closure);
   delete_list(l);
+  delete_state(start);
+  delete_state(s2);
+  delete_state(s1);
 }
 
 static void test_epsilon_closure_on_chain() {
@@ -57,6 +62,9 @@ static void test_epsilon_closure_on_chain() {
 
   delete_list(closure);
   delete_list(l);
+  delete_state(start);
+  delete_state(s2);
+  delete_state(s1);
 }
 
 static void test_epsilon_closure_duplicate() {
@@ -76,6 +84,9 @@ static void test_epsilon_closure_duplicate() {
 
   delete_list(closure);
   delete_list(l);
+  delete_state(start);
+  delete_state(s2);
+  delete_state(s1);
 }
 
 static void test_move_should_be_one_hop_only() {
@@ -90,6 +101,9 @@ static void test_move_should_be_one_hop_only() {
 
   delete_list(moves);
   delete_list(l);
+  delete_state(a2);
+  delete_state(a1);
+  delete_state(accept);
 }
 
 static void test_move_null() {
@@ -104,6 +118,9 @@ static void test_move_null() {
 
   delete_list(moves);
   delete_list(l);
+  delete_state(a);
+  delete_state(b);
+  delete_state(accept);
 }
 
 static void test_accepted() {

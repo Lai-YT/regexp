@@ -32,6 +32,11 @@ State* create_state(const int label, State** outs) {
   return new_state;
 }
 
+void delete_state(State* s) {
+  free(s->outs);
+  free(s);
+}
+
 Nfa* create_nfa(State* start, State* accept) {
   Nfa* n;
   n = malloc(sizeof *n);
@@ -126,6 +131,8 @@ Nfa* post2nfa(const char* post) {
 }
 
 void merge_state(State* a, State* b) {
+  free(a->outs);
   a->label = b->label;
   a->outs = b->outs;
+  free(b);
 }
