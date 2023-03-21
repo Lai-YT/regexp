@@ -14,11 +14,19 @@ bool regexp(const char* re, const char* s) {
 }
 
 bool accepted(const Nfa* nfa, const char* s) {
-  List* states = epsilon_closure(create_list(nfa->start));
+  State* start = create_list(nfa->start);
+  List* states = epsilon_closure(start);
   for (; *s; s++) {
-    states = epsilon_closure(move(states, *s));
+    List* moves = move(states, *s);
+    List* tmp = epsilon_closure(moves);
+    delete_list(moves);
+    delete_list(states);
+    states = tmp;
   }
-  return has_accept(states);
+  const bool res = has_accept(states);
+  delete_list(states);
+  delete_list(start);
+  return res;
 }
 
 bool contains(List* l, void* val) {
@@ -37,13 +45,18 @@ List* epsilon_closure(List* start) {
   List* tmp = create_list((s)); \
   append_list(tmp, stack);      \
   stack = tmp;
-#define POP() (stack = stack->next)
+
+#define POP()          \
+  List* tmp = stack;   \
+  stack = stack->next; \
+  tmp->next = NULL;    \
+  delete_list(tmp);
 
   for (List* l = start; l; l = l->next) {
     PUSH(l->val);
   }
 
-  List* closure = start;
+  List* closure = copy_list(start);
   while (stack) {
     State* top = stack->val;
     POP();
