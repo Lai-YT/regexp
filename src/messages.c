@@ -47,8 +47,8 @@ void usage() {
 void description() {
   fprintf(stdout, YELLOW "Description: " NO_COLOR);
   fprintf(stdout,
-          "Write here what you want to be your project description."
-          "Observe that you can break a string inside a fprintf\n");
+          "Matches the string (string) to the regular expression (regexp) and "
+          "exits with 1 if it does not match.\n\n");
 }
 
 /*
@@ -56,10 +56,11 @@ void description() {
  */
 void options() {
   fprintf(stdout, YELLOW "Options:\n\n" NO_COLOR);
-  fprintf(stdout, WHITE "\t-v|--version\n" NO_COLOR "\t\tPrints %s version\n\n",
+  fprintf(stdout,
+          WHITE "\t-v, --version\n" NO_COLOR "\t\tPrints %s version\n\n",
           __PROGRAM_NAME__);
   fprintf(stdout,
-          WHITE "\t-h|--help\n" NO_COLOR "\t\tPrints this help message\n\n");
+          WHITE "\t-h, --help\n" NO_COLOR "\t\tPrints this help message\n\n");
   fprintf(stdout, WHITE "\t--no-color\n" NO_COLOR
                         "\t\tDoes not use colors for printing\n\n");
 }
