@@ -26,10 +26,10 @@ int main(int argc, char* argv[]) {
 
 #ifdef DEBUG
   fprintf(stdout, BLUE "Command line options:\n" NO_COLOR);
-  fprintf(stdout, BROWN "help: %d\n" NO_COLOR, options.help);
-  fprintf(stdout, BROWN "version: %d\n" NO_COLOR, options.version);
-  fprintf(stdout, BROWN "use colors: %d\n" NO_COLOR, options.use_colors);
-  fprintf(stdout, BROWN "filename: %s\n" NO_COLOR, options.file_name);
+  fprintf(stdout, YELLOW "help: %d\n" NO_COLOR, options.help);
+  fprintf(stdout, YELLOW "version: %d\n" NO_COLOR, options.version);
+  fprintf(stdout, YELLOW "use colors: %d\n" NO_COLOR, options.use_colors);
+  fprintf(stdout, YELLOW "filename: %s\n" NO_COLOR, options.file_name);
 #endif
 
   /* Do your magic here :) */
