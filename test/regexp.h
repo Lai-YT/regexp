@@ -131,12 +131,15 @@ static void test_accepted() {
   Nfa* nfa = create_nfa(a, accept);
 
   assert_true(accepted(nfa, "ab"));
+
+  delete_state_chain(nfa->start);
+  delete_nfa(nfa);
 }
 
 static void test_all_regexp() {
   const char* re = "(a|b)*abb";  // consists only a/b and ends with abb
   const char* post = re2post(re);
-  const Nfa* nfa = post2nfa(post);
+  Nfa* nfa = post2nfa(post);
 
   assert_true(accepted(nfa, "abb"));
   assert_true(accepted(nfa, "babb"));
@@ -144,4 +147,7 @@ static void test_all_regexp() {
   assert_true(accepted(nfa, "abaabbaabb"));
   assert_false(accepted(nfa, "abaabbbb"));
   assert_false(accepted(nfa, "abaabbab"));
+
+  delete_state_chain(nfa->start);
+  delete_nfa(nfa);
 }

@@ -25,12 +25,16 @@ State* create_state(const int label, State** outs);
 
 void delete_state(State*);
 
+void delete_state_chain(State*);
+
 typedef struct Nfa {
   State* start;
   State* accept;
 } Nfa;
 
 Nfa* create_nfa(State* start, State* accept);
+
+void delete_nfa(Nfa*);
 
 Nfa* post2nfa(const char* post);
 

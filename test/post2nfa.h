@@ -53,6 +53,8 @@ static void test_create_nfa() {
 
   assert_ptr_equal(nfa->start, &start);
   assert_ptr_equal(nfa->accept, &accept);
+
+  delete_nfa(nfa);
 }
 
 static void test_post2nfa_concat_only() {
@@ -69,6 +71,9 @@ static void test_post2nfa_concat_only() {
   assert_int_equal(s->label, 'c');
   s = s->outs[0];
   assert_int_equal(s->label, ACCEPT);
+
+  delete_state_chain(nfa->start);
+  delete_nfa(nfa);
 }
 
 // TODO: refactor tests
@@ -97,6 +102,9 @@ static void test_post2nfa_union_only_single() {
     t = t->outs[0];
     assert_int_equal(t->label, ACCEPT);
   }
+
+  delete_state_chain(nfa->start);
+  delete_nfa(nfa);
 }
 
 static void test_post2nfa_union_only_complex() {
@@ -137,6 +145,9 @@ static void test_post2nfa_union_only_complex() {
       assert_int_equal(t->label, ACCEPT);
     }
   }
+
+  delete_state_chain(nfa->start);
+  delete_nfa(nfa);
 }
 
 static void test_post2nfa_zero_or_more() {
@@ -165,6 +176,9 @@ static void test_post2nfa_zero_or_more() {
     State* t = s->outs[1];
     assert_int_equal(t->label, ACCEPT);
   }
+
+  delete_state_chain(nfa->start);
+  delete_nfa(nfa);
 }
 
 static void test_post2nfa_zero_or_one() {
@@ -187,6 +201,9 @@ static void test_post2nfa_zero_or_one() {
     State* t = s->outs[1];
     assert_int_equal(t->label, ACCEPT);
   }
+
+  delete_state_chain(nfa->start);
+  delete_nfa(nfa);
 }
 
 static void test_post2nfa_one_or_more() {
@@ -207,6 +224,9 @@ static void test_post2nfa_one_or_more() {
     State* u = t->outs[1];
     assert_int_equal(u->label, ACCEPT);
   }
+
+  delete_state_chain(nfa->start);
+  delete_nfa(nfa);
 }
 
 static void test_post2nfa_mix() {
@@ -251,6 +271,9 @@ static void test_post2nfa_mix() {
     t = t->outs[0];
     assert_int_equal(t->label, ACCEPT);
   }
+
+  delete_state_chain(nfa->start);
+  delete_nfa(nfa);
 }
 
 static void test_missing_operator_should_return_null() {

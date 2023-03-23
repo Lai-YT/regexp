@@ -29,7 +29,7 @@ bool accepted(const Nfa* nfa, const char* s) {
   return res;
 }
 
-bool contains(List* l, void* val) {
+static bool contains(List* l, void* val) {
   for (; l; l = l->next) {
     if (val == l->val) {
       return true;
