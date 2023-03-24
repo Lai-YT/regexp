@@ -41,10 +41,9 @@ ifeq ($(OS),Darwin)
 endif
 
 # Color definition for print purpose
-BROWN=\$(COLOR_PREFIX)[0;33m
+YELLOW=\$(COLOR_PREFIX)[0;33m
 BLUE=\$(COLOR_PREFIX)[1;34m
 END_COLOR=\$(COLOR_PREFIX)[0m
-
 
 
 # Source code directory structure
@@ -85,10 +84,8 @@ LIBS := # -lm  -I some/path/to/library
 TEST_LIBS := -l cmocka -L /usr/lib
 
 
-
 # Tests binary file
 TEST_BINARY := $(BINARY)_test_runner
-
 
 
 # %.o file names
@@ -104,39 +101,27 @@ default: all
 
 # Help message
 help:
-	@echo "C Project Template"
+	@echo -e "$(BLUE)$(PROJECT_NAME)$(END_COLOR)"
 	@echo
 	@echo "Target rules:"
 	@echo "    all      - Compiles and generates binary file"
-	@echo "    tests    - Compiles with cmocka and run tests binary file"
-	@echo "    start    - Starts a new project using C project template"
-	@echo "    valgrind - Runs binary file using valgrind tool"
-	@echo "    clean    - Clean the project by removing binaries"
+	@echo "    tests    - Compiles with cmocka and runs test binary file"
+	@echo "    valgrind - Runs test binary file using valgrind tool"
+	@echo "    fmt      - Formats the source and test files"
+	@echo "    clean    - Cleans the project by removing binaries"
 	@echo "    help     - Prints a help message with target rules"
-
-# Starts a new project using C project template
-start:
-	@echo "Creating project: $(PROJECT_NAME)"
-	@mkdir -pv $(PROJECT_PATH)
-	@echo "Copying files from template to new directory:"
-	@cp -rvf ./* /home/grep/
-	@echo
-	@echo "Go to $(PROJECT_PATH) and compile your project: make"
-	@echo "Then execute it: bin/$(BINARY) --help"
-	@echo "Happy hacking o/"
-
 
 # Rule for link and generate the binary file
 all: $(OBJECTS)
-	@echo -en "$(BROWN)LD $(END_COLOR)";
+	@echo -en "$(YELLOW)LD $(END_COLOR)";
 	$(CC) -o $(BINDIR)/$(BINARY) $+ $(DEBUG) $(CFLAGS) $(LIBS)
 	@echo -en "\n--\nBinary file placed at" \
-			  "$(BROWN)$(BINDIR)/$(BINARY)$(END_COLOR)\n";
+			  "$(YELLOW)$(BINDIR)/$(BINARY)$(END_COLOR)\n";
 
 
 # Rule for object binaries compilation
 $(LIBDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	@echo -en "$(BROWN)CC $(END_COLOR)";
+	@echo -en "$(YELLOW)CC $(END_COLOR)";
 	$(CC) -c $^ -o $@ $(DEBUG) $(CFLAGS) $(LIBS)
 
 
@@ -157,12 +142,13 @@ fmt:
 		-style=file \
 		{$(SRCDIR),$(TESTDIR)}/*.{h,c}
 
+
 # Compile tests and run the test binary
 tests: all
-	@echo -en "$(BROWN)CC $(END_COLOR)";
+	@echo -en "$(YELLOW)CC $(END_COLOR)";
 	$(CC) $(TESTDIR)/main.c -o $(BINDIR)/$(TEST_BINARY) $(shell find $(LIBDIR) -name *.o ! -name main.o) $(DEBUG) $(CFLAGS) $(LIBS) $(TEST_LIBS)
 	@which ldconfig && ldconfig -C /tmp/ld.so.cache || true # caching the library linking
-	@echo -en "$(BROWN) Running tests: $(END_COLOR)";
+	@echo -en "$(YELLOW) Running tests: $(END_COLOR)";
 	./$(BINDIR)/$(TEST_BINARY)
 
 
