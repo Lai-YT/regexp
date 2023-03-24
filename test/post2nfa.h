@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "../src/post2nfa.h"
+#include "assertion.h"
 
 // clang-format off
 // cmocka allows test applications to use custom definitions of C standard
@@ -18,7 +19,7 @@ static void test_create_labeled_state() {
 
   State* labeled_state = create_state(label, outs);
 
-  assert_int_equal(labeled_state->label, label);
+  ASSERT_LABEL(labeled_state, label);
   assert_ptr_equal(labeled_state->outs[0], outs[0]);
 
   delete_state(labeled_state);
@@ -30,7 +31,7 @@ static void test_create_epsilon_state() {
 
   State* epsilon_state = create_state(SPLIT, outs);
 
-  assert_int_equal(epsilon_state->label, SPLIT);
+  ASSERT_LABEL(epsilon_state, SPLIT);
   assert_ptr_equal(epsilon_state->outs[0], &out1);
   assert_ptr_equal(epsilon_state->outs[1], &out2);
 
@@ -40,7 +41,7 @@ static void test_create_epsilon_state() {
 static void test_create_accepting_state() {
   State* accepting_state = create_state(ACCEPT, NULL);
 
-  assert_int_equal(accepting_state->label, ACCEPT);
+  ASSERT_LABEL(accepting_state, ACCEPT);
   assert_null(accepting_state->outs[0]);
 
   delete_state(accepting_state);
@@ -64,19 +65,15 @@ static void test_post2nfa_concat_only() {
   Nfa* nfa = post2nfa(post);
 
   assert_non_null(nfa);
-  State* s = nfa->start;
-  assert_int_equal(s->label, 'a');
-  s = s->outs[0];
-  assert_int_equal(s->label, 'b');
-  s = s->outs[0];
-  assert_int_equal(s->label, 'c');
-  s = s->outs[0];
-  assert_int_equal(s->label, ACCEPT);
+  ASSERT_NON_SPLIT_TRANSITION_LABELS(nfa->start, 'a', 'b', 'c', ACCEPT);
 
   delete_nfa(nfa);
 }
 
-// TODO: refactor tests
+// Conventions used when testing NFAs:
+// - The transitions of a SPLIT state is tested in a new block
+// - A transition should be in a new block if it requires more than one
+// statement to test
 
 static void test_post2nfa_union_only_single() {
   const char* post = "ab|";
@@ -84,23 +81,12 @@ static void test_post2nfa_union_only_single() {
   Nfa* nfa = post2nfa(post);
 
   assert_non_null(nfa);
-  State* s = nfa->start;
-  assert_int_equal(s->label, SPLIT);
+  ASSERT_LABEL(nfa->start, SPLIT);
   {
-    State* t = s->outs[0];
-    assert_int_equal(t->label, 'a');
-    t = t->outs[0];
-    assert_int_equal(t->label, EPSILON);
-    t = t->outs[0];
-    assert_int_equal(t->label, ACCEPT);
-  }
-  {
-    State* t = s->outs[1];
-    assert_int_equal(t->label, 'b');
-    t = t->outs[0];
-    assert_int_equal(t->label, EPSILON);
-    t = t->outs[0];
-    assert_int_equal(t->label, ACCEPT);
+    ASSERT_NON_SPLIT_TRANSITION_LABELS(nfa->start->outs[0], 'a', EPSILON,
+                                       ACCEPT);
+    ASSERT_NON_SPLIT_TRANSITION_LABELS(nfa->start->outs[1], 'b', EPSILON,
+                                       ACCEPT);
   }
 
   delete_nfa(nfa);
@@ -112,36 +98,19 @@ static void test_post2nfa_union_only_complex() {
   Nfa* nfa = post2nfa(post);
 
   assert_non_null(nfa);
-  State* s = nfa->start;
-  assert_int_equal(s->label, SPLIT);
+  ASSERT_LABEL(nfa->start, SPLIT);
   {
-    State* t = s->outs[0];
-    assert_int_equal(t->label, 'a');
-    t = t->outs[0];
-    assert_int_equal(t->label, EPSILON);
-    t = t->outs[0];
-    assert_int_equal(t->label, ACCEPT);
-  }
-  {
-    State* t = s->outs[1];
-    assert_int_equal(t->label, SPLIT);
+    ASSERT_NON_SPLIT_TRANSITION_LABELS(nfa->start->outs[0], 'a', EPSILON,
+                                       ACCEPT);
     {
-      State* u = t->outs[0];
-      assert_int_equal(u->label, 'b');
-      u = u->outs[0];
-      assert_int_equal(u->label, EPSILON);
-      u = u->outs[0];
-      assert_int_equal(u->label, EPSILON);
-    }
-    {
-      State* u = t->outs[1];
-      assert_int_equal(u->label, 'c');
-      u = u->outs[0];
-      assert_int_equal(u->label, EPSILON);
-      u = u->outs[0];
-      assert_int_equal(u->label, EPSILON);
-      t = u->outs[0];
-      assert_int_equal(t->label, ACCEPT);
+      State* s = nfa->start->outs[1];
+      ASSERT_LABEL(s, SPLIT);
+      {
+        ASSERT_NON_SPLIT_TRANSITION_LABELS(s->outs[0], 'b', EPSILON, EPSILON,
+                                           ACCEPT);
+        ASSERT_NON_SPLIT_TRANSITION_LABELS(s->outs[1], 'c', EPSILON, EPSILON,
+                                           ACCEPT);
+      }
     }
   }
 
@@ -154,25 +123,19 @@ static void test_post2nfa_zero_or_more() {
   Nfa* nfa = post2nfa(post);
 
   assert_non_null(nfa);
-  State* s = nfa->start;
-  assert_int_equal(s->label, SPLIT);
+  ASSERT_LABEL(nfa->start, SPLIT);
   {
-    State* a = s->outs[0];
-    assert_int_equal(a->label, 'a');
-    State* t = a->outs[0];
-    assert_int_equal(t->label, SPLIT);
     {
-      State* u = t->outs[0];
-      assert_ptr_equal(u, a);  // should come back
+      State* start_of_a = nfa->start->outs[0];
+      ASSERT_LABEL(start_of_a, 'a');
+      State* out_of_a = start_of_a->outs[0];
+      ASSERT_LABEL(out_of_a, SPLIT);
+      {
+        assert_ptr_equal(out_of_a->outs[0], start_of_a);  // should come back
+        ASSERT_LABEL(out_of_a->outs[1], ACCEPT);
+      }
     }
-    {
-      State* u = t->outs[1];
-      assert_int_equal(u->label, ACCEPT);
-    }
-  }
-  {
-    State* t = s->outs[1];
-    assert_int_equal(t->label, ACCEPT);
+    ASSERT_LABEL(nfa->start->outs[1], ACCEPT);
   }
 
   delete_nfa(nfa);
@@ -184,19 +147,11 @@ static void test_post2nfa_zero_or_one() {
   Nfa* nfa = post2nfa(post);
 
   assert_non_null(nfa);
-  State* s = nfa->start;
-  assert_int_equal(s->label, SPLIT);
+  ASSERT_LABEL(nfa->start, SPLIT);
   {
-    State* t = s->outs[0];
-    assert_int_equal(t->label, 'a');
-    t = t->outs[0];
-    assert_int_equal(t->label, EPSILON);
-    t = t->outs[0];
-    assert_int_equal(t->label, ACCEPT);
-  }
-  {
-    State* t = s->outs[1];
-    assert_int_equal(t->label, ACCEPT);
+    ASSERT_NON_SPLIT_TRANSITION_LABELS(nfa->start->outs[0], 'a', EPSILON,
+                                       ACCEPT);
+    ASSERT_LABEL(nfa->start->outs[1], ACCEPT);
   }
 
   delete_nfa(nfa);
@@ -208,17 +163,13 @@ static void test_post2nfa_one_or_more() {
   Nfa* nfa = post2nfa(post);
 
   assert_non_null(nfa);
-  State* a = nfa->start;
-  assert_int_equal(a->label, 'a');
-  State* t = a->outs[0];
-  assert_int_equal(t->label, SPLIT);
+  State* start_of_a = nfa->start;
+  ASSERT_LABEL(start_of_a, 'a');
+  State* out_of_a = start_of_a->outs[0];
+  ASSERT_LABEL(out_of_a, SPLIT);
   {
-    State* u = t->outs[0];
-    assert_ptr_equal(u, a);  // should come back
-  }
-  {
-    State* u = t->outs[1];
-    assert_int_equal(u->label, ACCEPT);
+    assert_ptr_equal(out_of_a->outs[0], start_of_a);  // should come back
+    ASSERT_LABEL(out_of_a->outs[1], ACCEPT);
   }
 
   delete_nfa(nfa);
@@ -231,40 +182,30 @@ static void test_post2nfa_mix() {
 
   assert_non_null(nfa);
   State* s = nfa->start;
-  assert_int_equal(s->label, 'a');
+  ASSERT_LABEL(s, 'a');
   s = s->outs[0];
-  assert_int_equal(s->label, SPLIT);
+  ASSERT_LABEL(s, SPLIT);
   {
-    State* t = s->outs[0];
-    assert_int_equal(t->label, SPLIT);
     {
-      State* a = t->outs[0];
-      assert_int_equal(a->label, 'b');
-      State* u = a->outs[0];
-      assert_int_equal(u->label, SPLIT);
+      State* t = s->outs[0];
+      ASSERT_LABEL(t, SPLIT);
       {
-        State* v = u->outs[0];
-        assert_ptr_equal(v, a);  // should come back
-      }
-      {
-        State* v = u->outs[1];
-        assert_int_equal(v->label, EPSILON);
+        {
+          State* start_of_b = t->outs[0];
+          ASSERT_LABEL(start_of_b, 'b');
+          State* out_of_b = start_of_b->outs[0];
+          ASSERT_LABEL(out_of_b, SPLIT);
+          {
+            assert_ptr_equal(out_of_b->outs[0],
+                             start_of_b);  // should come back
+            ASSERT_NON_SPLIT_TRANSITION_LABELS(out_of_b->outs[1], EPSILON,
+                                               ACCEPT);
+          }
+        }
+        ASSERT_NON_SPLIT_TRANSITION_LABELS(t->outs[1], EPSILON, ACCEPT);
       }
     }
-    {
-      State* u = t->outs[1];
-      assert_int_equal(u->label, EPSILON);
-      u = u->outs[0];
-      assert_int_equal(u->label, ACCEPT);
-    }
-  }
-  {
-    State* t = s->outs[1];
-    assert_int_equal(t->label, 'c');
-    t = t->outs[0];
-    assert_int_equal(t->label, EPSILON);
-    t = t->outs[0];
-    assert_int_equal(t->label, ACCEPT);
+    ASSERT_NON_SPLIT_TRANSITION_LABELS(s->outs[1], 'c', EPSILON, ACCEPT);
   }
 
   delete_nfa(nfa);
