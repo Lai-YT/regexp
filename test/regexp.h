@@ -132,7 +132,6 @@ static void test_accepted() {
 
   assert_true(accepted(nfa, "ab"));
 
-  delete_state_chain(nfa->start);
   delete_nfa(nfa);
 }
 
@@ -148,6 +147,5 @@ static void test_all_regexp() {
   assert_false(accepted(nfa, "abaabbbb"));
   assert_false(accepted(nfa, "abaabbab"));
 
-  delete_state_chain(nfa->start);
   delete_nfa(nfa);
 }

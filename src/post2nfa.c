@@ -57,7 +57,7 @@ static bool contains(List* l, void* val) {
   return false;
 }
 
-void collect_states(List** states, State* start) {
+static void collect_states(List** states, State* start) {
   if (contains(*states, start)) {
     return;
   }
@@ -75,7 +75,7 @@ void collect_states(List** states, State* start) {
   }
 }
 
-void delete_state_chain(State* s) {
+static void delete_state_chain(State* s) {
   List* states = NULL;
   collect_states(&states, s);
   for (List* c = states; c; c = c->next) {
@@ -89,6 +89,7 @@ void delete_state_chain(State* s) {
 }
 
 void delete_nfa(Nfa* nfa) {
+  delete_state_chain(nfa->start);
   free(nfa);
 }
 
@@ -99,12 +100,6 @@ Nfa* post2nfa(const char* post) {
 #define IS_EMPTY() (top == stack)
 #define PUSH(s) (*top++ = (s))
 #define POP() IS_EMPTY() ? NULL : (*--top)
-#define DELETE_STACK()            \
-  while (!IS_EMPTY()) {           \
-    Nfa* n = POP();               \
-    delete_state_chain(n->start); \
-    delete_nfa(n);                \
-  }
 
   for (; *post; post++) {
     switch (*post) {
@@ -113,30 +108,26 @@ Nfa* post2nfa(const char* post) {
         Nfa* n1 = POP();
         if (!n1 || !n2) {
           if (n1) {
-            delete_state_chain(n1->start);
             delete_nfa(n1);
           }
           if (n2) {
-            delete_state_chain(n2->start);
             delete_nfa(n2);
           }
           return NULL;
         }
         merge_state(n1->accept, n2->start);
         PUSH(create_nfa(n1->start, n2->accept));
-        delete_nfa(n1);
-        delete_nfa(n2);
+        free(n1);
+        free(n2);
       } break;
       case '|': {
         Nfa* n2 = POP();
         Nfa* n1 = POP();
         if (!n1 || !n2) {
           if (n1) {
-            delete_state_chain(n1->start);
             delete_nfa(n1);
           }
           if (n2) {
-            delete_state_chain(n2->start);
             delete_nfa(n2);
           }
           return NULL;
@@ -149,8 +140,8 @@ Nfa* post2nfa(const char* post) {
         n2->accept->label = EPSILON;
         n2->accept->outs[0] = accept;
         PUSH(create_nfa(start, accept));
-        delete_nfa(n1);
-        delete_nfa(n2);
+        free(n1);
+        free(n2);
       } break;
       case '*': {
         Nfa* n = POP();
@@ -163,7 +154,7 @@ Nfa* post2nfa(const char* post) {
         State* come_back = create_state(SPLIT, start->outs);
         merge_state(n->accept, come_back);
         PUSH(create_nfa(start, accept));
-        delete_nfa(n);
+        free(n);
       } break;
       case '?': {
         Nfa* n = POP();
@@ -176,7 +167,7 @@ Nfa* post2nfa(const char* post) {
         n->accept->label = EPSILON;
         n->accept->outs[0] = accept;
         PUSH(create_nfa(start, accept));
-        delete_nfa(n);
+        free(n);
       } break;
       case '+': {
         Nfa* n = POP();
@@ -188,7 +179,7 @@ Nfa* post2nfa(const char* post) {
         State* come_back = create_state(SPLIT, outs);
         merge_state(n->accept, come_back);
         PUSH(create_nfa(n->start, accept));
-        delete_nfa(n);
+        free(n);
       } break;
       default: {
         State* accept = create_state(ACCEPT, NULL);
@@ -200,14 +191,15 @@ Nfa* post2nfa(const char* post) {
 
   Nfa* nfa = POP();
   if (!IS_EMPTY()) {
-    delete_state_chain(nfa->start);
     delete_nfa(nfa);
-    DELETE_STACK();
+    while (!IS_EMPTY()) {
+      Nfa* n = POP();
+      delete_nfa(n);
+    }
     return NULL;
   }
   return nfa;
 
-#undef DELETE_STACK
 #undef POP
 #undef PUSH
 #undef IS_EMPTY

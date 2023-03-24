@@ -23,17 +23,19 @@ typedef struct State {
 /// reserved.
 State* create_state(const int label, State** outs);
 
+/// @brief Deletes the state but not the states it transits to.
 void delete_state(State*);
-
-void delete_state_chain(State*);
 
 typedef struct Nfa {
   State* start;
   State* accept;
 } Nfa;
 
+/// @note The ownership of all the states connected between start and accept are
+/// taken by the NFA.
 Nfa* create_nfa(State* start, State* accept);
 
+/// @brief Deletes the NFA and all the states it contains.
 void delete_nfa(Nfa*);
 
 Nfa* post2nfa(const char* post);
@@ -41,6 +43,7 @@ Nfa* post2nfa(const char* post);
 /// @brief Merges b into a, which connects the outs of b to a.
 /// @param a The state to be replace. It's contents will be lost.
 /// @param b The state to replace with.
+/// @note State b is deleted after the merge.
 void merge_state(State* a, State* b);
 
 #endif /* end of include guard: POST2NFA_H */

@@ -47,12 +47,13 @@ static void test_create_accepting_state() {
 }
 
 static void test_create_nfa() {
-  State start, accept;  // ill-formed but doesn't matter
+  State* accept = create_state(ACCEPT, NULL);
+  State* start = create_state('a', &accept);
 
-  Nfa* nfa = create_nfa(&start, &accept);
+  Nfa* nfa = create_nfa(start, accept);
 
-  assert_ptr_equal(nfa->start, &start);
-  assert_ptr_equal(nfa->accept, &accept);
+  assert_ptr_equal(nfa->start, start);
+  assert_ptr_equal(nfa->accept, accept);
 
   delete_nfa(nfa);
 }
@@ -72,7 +73,6 @@ static void test_post2nfa_concat_only() {
   s = s->outs[0];
   assert_int_equal(s->label, ACCEPT);
 
-  delete_state_chain(nfa->start);
   delete_nfa(nfa);
 }
 
@@ -103,7 +103,6 @@ static void test_post2nfa_union_only_single() {
     assert_int_equal(t->label, ACCEPT);
   }
 
-  delete_state_chain(nfa->start);
   delete_nfa(nfa);
 }
 
@@ -146,7 +145,6 @@ static void test_post2nfa_union_only_complex() {
     }
   }
 
-  delete_state_chain(nfa->start);
   delete_nfa(nfa);
 }
 
@@ -177,7 +175,6 @@ static void test_post2nfa_zero_or_more() {
     assert_int_equal(t->label, ACCEPT);
   }
 
-  delete_state_chain(nfa->start);
   delete_nfa(nfa);
 }
 
@@ -202,7 +199,6 @@ static void test_post2nfa_zero_or_one() {
     assert_int_equal(t->label, ACCEPT);
   }
 
-  delete_state_chain(nfa->start);
   delete_nfa(nfa);
 }
 
@@ -225,7 +221,6 @@ static void test_post2nfa_one_or_more() {
     assert_int_equal(u->label, ACCEPT);
   }
 
-  delete_state_chain(nfa->start);
   delete_nfa(nfa);
 }
 
@@ -272,7 +267,6 @@ static void test_post2nfa_mix() {
     assert_int_equal(t->label, ACCEPT);
   }
 
-  delete_state_chain(nfa->start);
   delete_nfa(nfa);
 }
 
