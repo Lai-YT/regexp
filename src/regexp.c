@@ -14,7 +14,7 @@ bool regexp(const char* re, const char* s) {
 }
 
 bool accepted(const Nfa* nfa, const char* s) {
-  State* start = create_list(nfa->start);
+  List* start = create_list(nfa->start);
   List* states = epsilon_closure(start);
   for (; *s; s++) {
     List* moves = move(states, *s);
