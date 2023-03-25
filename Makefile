@@ -78,7 +78,7 @@ CFLAGS := -O3 $(STD) $(STACK) $(WARNS)
 DEBUG := -g3 -DDEBUG=1
 
 # Dependency libraries
-LIBS := # -lm  -I some/path/to/library
+LIBS := -lm
 
 # Test libraries
 TEST_LIBS := -l cmocka -L /usr/lib
