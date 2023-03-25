@@ -67,13 +67,7 @@ Set* epsilon_closure(Set* start) {
   while (stack) {
     State* top = stack->val;
     POP();
-    size_t num_of_epsilon_outs = 0;
-    if (top->label == EPSILON) {
-      num_of_epsilon_outs = 1;
-    } else if (top->label == SPLIT) {
-      num_of_epsilon_outs = 2;
-    }
-    for (size_t i = 0; i < num_of_epsilon_outs; i++) {
+    for (size_t i = 0; i < num_of_epsilon_outs(top->label); i++) {
       State* out = top->outs[i];
       if (!has_key(closure, out)) {
         insert_key(closure, out);
