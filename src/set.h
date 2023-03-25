@@ -19,4 +19,17 @@ void insert_key(Set*, void* key);
 bool has_key(Set*, void* key);
 void delete_key(Set*, void* key);
 
+typedef struct SetIterator SetIterator;
+
+SetIterator* create_iterator(Set*);
+void delete_iterator(SetIterator*);
+
+/// @exception Assertion error if no preceding call on next.
+void* get_key(SetIterator*);
+
+bool has_next(SetIterator*);
+
+/// @exception Assertion error if there's no more next.
+void next(SetIterator*);
+
 #endif /* end of include guard: SET_H */

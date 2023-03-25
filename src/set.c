@@ -1,5 +1,6 @@
 #include "set.h"
 
+#include <assert.h>
 #include <math.h>    // floor, sqrt
 #include <stddef.h>  //size_t
 #include <stdint.h>  // intptr_t
@@ -179,4 +180,41 @@ static int next_prime(int n) {
     n++;
   }
   return n;
+}
+
+struct SetIterator {
+  int pos;
+  int seen_so_far;
+  Set* set;
+};
+
+SetIterator* create_iterator(Set* s) {
+  SetIterator* itr = malloc(sizeof(SetIterator));
+  itr->set = s;
+  itr->pos = -1;
+  itr->seen_so_far = 0;
+  return itr;
+}
+
+void delete_iterator(SetIterator* itr) {
+  free(itr);
+}
+
+bool has_next(SetIterator* itr) {
+  return itr->seen_so_far != itr->set->size;
+}
+
+void next(SetIterator* itr) {
+  assert(has_next(itr));
+  for (itr->pos++; itr->pos < itr->set->capacity; itr->pos++) {
+    if (itr->set->keys[itr->pos] && itr->set->keys[itr->pos] != DELETE_MARKER) {
+      itr->seen_so_far++;
+      return;
+    }
+  }
+}
+
+void* get_key(SetIterator* itr) {
+  assert(itr->pos != -1);
+  return itr->set->keys[itr->pos];
 }
