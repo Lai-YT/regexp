@@ -15,22 +15,28 @@ bool regexp(const char* re, const char* s) {
 }
 
 bool accepted(const Nfa* nfa, const char* s) {
-  List* start = create_list(nfa->start);
-  List* states = epsilon_closure(start);
+  Set* start = create_set();
+  insert_key(start, nfa->start);
+  Set* states = epsilon_closure(start);
   for (; *s; s++) {
-    List* moves = move(states, *s);
-    List* tmp = epsilon_closure(moves);
-    delete_list(moves);
-    delete_list(states);
-    states = tmp;
+    Set* moves = move(states, *s);
+    delete_set(states);
+    states = epsilon_closure(moves);
+    delete_set(moves);
   }
-  const bool res = has_accept(states);
-  delete_list(states);
-  delete_list(start);
-  return res;
+
+  /// Thompson's algorithm proves that: For any regular language L, there is an
+  /// NFA that accepts L that has exactly one accepting state t, which is
+  /// distinct from the starting state s.
+  /// See
+  /// https://courses.engr.illinois.edu/cs374/fa2018/notes/models/04-nfa.pdf.
+  const bool accepted = has_key(states, nfa->accept);
+  delete_set(states);
+  delete_set(start);
+  return accepted;
 }
 
-List* epsilon_closure(List* start) {
+Set* epsilon_closure(Set* start) {
   List* stack = NULL;
 
 #define PUSH(s)                 \
@@ -44,13 +50,16 @@ List* epsilon_closure(List* start) {
   tmp->next = NULL;    \
   delete_list(tmp);
 
-  Set* closure_set = create_set();
-  List* closure = copy_list(start);
-  for (List* l = start; l; l = l->next) {
-    PUSH(l->val);
-    insert_key(closure_set, l->val);
+  Set* closure = create_set();
+  {  // limit the scope of itr
+    SetIterator* itr = create_iterator(start);
+    while (has_next(itr)) {
+      next(itr);
+      PUSH(get_key(itr));
+      insert_key(closure, get_key(itr));
+    }
+    delete_iterator(itr);
   }
-
   while (stack) {
     State* top = stack->val;
     POP();
@@ -61,40 +70,29 @@ List* epsilon_closure(List* start) {
       num_of_epsilon_outs = 2;
     }
     for (size_t i = 0; i < num_of_epsilon_outs; i++) {
-      if (!has_key(closure_set, top->outs[i])) {
-        insert_key(closure_set, top->outs[i]);
-        append_list(closure, create_list(top->outs[i]));
-        PUSH(top->outs[i]);
+      State* out = top->outs[i];
+      if (!has_key(closure, out)) {
+        insert_key(closure, out);
+        PUSH(out);
       }
     }
   }
-  delete_set(closure_set);
   return closure;
 
 #undef POP
 #undef PUSH
 }
 
-List* move(List* l, char c) {
-  List* outs = NULL;
-  for (; l; l = l->next) {
-    State* s = l->val;
+Set* move(Set* from, char c) {
+  Set* outs = create_set();
+  SetIterator* itr = create_iterator(from);
+  while (has_next(itr)) {
+    next(itr);
+    State* s = get_key(itr);
     if (s->label == c) {
-      // appending is not safe since outs may be NULL, so prepends
-      List* tmp = create_list(s->outs[0]);
-      append_list(tmp, outs);
-      outs = tmp;
+      insert_key(outs, s->outs[0]);
     }
   }
+  delete_iterator(itr);
   return outs;
-}
-
-bool has_accept(List* l) {
-  for (; l; l = l->next) {
-    State* s = l->val;
-    if (s->label == ACCEPT) {
-      return true;
-    }
-  }
-  return false;
 }
