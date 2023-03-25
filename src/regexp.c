@@ -14,6 +14,9 @@ bool regexp(const char* re, const char* s) {
   return accepted(nfa, s);
 }
 
+/// @details Simulates the NFA by moving between the possible set of states.
+/// If the accepting state is in the set after the last input character is
+/// consumed, the NFA accepts the string.
 bool accepted(const Nfa* nfa, const char* s) {
   Set* start = create_set();
   insert_key(start, nfa->start);
@@ -51,6 +54,7 @@ Set* epsilon_closure(Set* start) {
   delete_list(tmp);
 
   Set* closure = create_set();
+  // Inserts all of the start states into the closure and the stack.
   {  // limit the scope of itr
     SetIterator* itr = create_iterator(start);
     while (has_next(itr)) {

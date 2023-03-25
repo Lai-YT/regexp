@@ -21,6 +21,8 @@ void delete_key(Set*, void* key);
 
 typedef struct SetIterator SetIterator;
 
+/// @note The iterator becomes invalid once an operation is made during
+/// iteration.
 SetIterator* create_iterator(Set*);
 void delete_iterator(SetIterator*);
 

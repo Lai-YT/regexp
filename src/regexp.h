@@ -18,8 +18,8 @@ bool accepted(const Nfa*, const char*);
 /// transitions, including all of the start states itself.
 Set* epsilon_closure(Set* start);
 
-/// @brief Returns the states that are reachable from list of states l on label
+/// @brief Returns the states that are reachable from the set of states on label
 /// c with non-epsilon moves.
-Set* move(Set* from, char c);
+Set* move(Set*, char c);
 
 #endif /* end of include guard: REGEXP_H */
