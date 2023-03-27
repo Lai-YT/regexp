@@ -175,17 +175,17 @@ static void resize_map(Map* old, size_t capacity) {
   }
 
   // 3. Point to the new map
-  Map ht_to_free = *old;
+  Map map_to_free = *old;
   *old = *new;
 
   // 4. Free the old map
-  *new = ht_to_free;
+  *new = map_to_free;
   // free the pairs from old and the map itself from new
   delete_map(new);
 }
 
 struct MapIterator {
-  size_t pos;
+  int pos;
   unsigned seen_so_far;
   Map* map;
 };
@@ -193,7 +193,7 @@ struct MapIterator {
 MapIterator* create_map_iterator(Map* map) {
   MapIterator* itr = malloc(sizeof(MapIterator));
   itr->map = map;
-  itr->pos = 0;
+  itr->pos = -1;  // if init to 0, to_next may skip the first used pair
   itr->seen_so_far = 0;
   return itr;
 }
@@ -218,11 +218,11 @@ void to_next(MapIterator* itr) {
 }
 
 int get_current_key(MapIterator* itr) {
-  assert(itr->seen_so_far != 0);
+  assert(itr->pos != -1);
   return itr->map->pairs[itr->pos]->key;
 }
 
 void* get_current_value(MapIterator* itr) {
-  assert(itr->seen_so_far != 0);
+  assert(itr->pos != -1);
   return itr->map->pairs[itr->pos]->val;
 }
