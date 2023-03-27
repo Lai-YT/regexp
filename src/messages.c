@@ -17,7 +17,6 @@
 #include "messages.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "colors.h"
 
@@ -47,6 +46,10 @@ void usage() {
 void description() {
   fprintf(stdout, YELLOW "Description: " NO_COLOR);
   fprintf(stdout,
+          "Regular expression implementation.\n"
+          "Supports only ( | ) * + ?. No escapes.\n"
+          "Compiles to NFA and then simulates NFA using Thompson's algorithm.\n"
+          "\n"
           "Matches the string (string) to the regular expression (regexp) and "
           "exits with 1 if it does not match.\n\n");
 }
@@ -61,8 +64,6 @@ void options() {
           __PROGRAM_NAME__);
   fprintf(stdout,
           WHITE "\t-h, --help\n" NO_COLOR "\t\tPrints this help message\n\n");
-  fprintf(stdout, WHITE "\t--no-color\n" NO_COLOR
-                        "\t\tDoes not use colors for printing\n\n");
 }
 
 /*

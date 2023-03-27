@@ -26,16 +26,21 @@ int main(int argc, char* argv[]) {
   options_parser(argc, argv, &options);
 
 #ifdef DEBUG
-  fprintf(stdout, BLUE "Command line options:\n" NO_COLOR);
-  fprintf(stdout, YELLOW "help: %d\n" NO_COLOR, options.help);
-  fprintf(stdout, YELLOW "version: %d\n" NO_COLOR, options.version);
-  fprintf(stdout, YELLOW "use colors: %d\n" NO_COLOR, options.use_colors);
-  fprintf(stdout, YELLOW "regexp: %s\n" NO_COLOR, options.regexp);
-  fprintf(stdout, YELLOW "string: %s\n" NO_COLOR, options.string);
+  fprintf(stdout, CYAN "Command line options:\n" NO_COLOR);
+  fprintf(stdout, CYAN "  help: %d\n" NO_COLOR, options.help);
+  fprintf(stdout, CYAN "  version: %d\n" NO_COLOR, options.version);
+  fprintf(stdout, CYAN "  regexp: %s\n" NO_COLOR, options.regexp);
+  fprintf(stdout, CYAN "  string: %s\n" NO_COLOR, options.string);
 #endif
 
   if (regexp(options.regexp, options.string)) {
+#ifdef DEBUG
+    fprintf(stdout, YELLOW "The regexp matches the string.\n" NO_COLOR);
+#endif
     return 0;
   }
+#ifdef DEBUG
+  fprintf(stdout, RED "The regexp doesn't match the string.\n" NO_COLOR);
+#endif
   return 1;
 }

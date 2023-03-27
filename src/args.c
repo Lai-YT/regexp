@@ -16,6 +16,8 @@
 
 #include "args.h"
 
+#include <getopt.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,7 +31,6 @@
 static void set_default_options(options_t* options) {
   options->help = false;
   options->version = false;
-  options->use_colors = true;
 }
 
 /*
@@ -46,10 +47,6 @@ void switch_options(int arg, options_t* options) {
       options->version = true;
       version();
       exit(EXIT_SUCCESS);
-
-    case 0:
-      options->use_colors = false;
-      break;
 
     case '?':
       usage();
@@ -91,7 +88,7 @@ void options_parser(int argc, char* argv[], options_t* options) {
   static struct option long_options[] = {
       {"help", no_argument, 0, 'h'},
       {"version", no_argument, 0, 'v'},
-      {"no-colors", no_argument, 0, 0},
+      {0, 0, 0, 0},
   };
 
   while (true) {
@@ -99,8 +96,9 @@ void options_parser(int argc, char* argv[], options_t* options) {
     arg = getopt_long(argc, argv, "hv", long_options, &option_index);
 
     /* End of the options? */
-    if (arg == -1) break;
-
+    if (arg == -1) {
+      break;
+    }
     /* Find the matching case of the argument */
     switch_options(arg, options);
   }

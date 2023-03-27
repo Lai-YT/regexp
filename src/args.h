@@ -17,7 +17,6 @@
 #ifndef ARGS_H
 #define ARGS_H
 
-#include <getopt.h>
 #include <stdbool.h>
 
 #define BUF_SIZE 100
@@ -26,7 +25,6 @@
 struct options {
   bool help;
   bool version;
-  bool use_colors;
   char regexp[BUF_SIZE];
   char string[BUF_SIZE];
 };
