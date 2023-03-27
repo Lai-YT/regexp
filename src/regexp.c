@@ -10,8 +10,10 @@
 
 bool regexp(const char* re, const char* s) {
   const char* post = re2post(re);
-  const Nfa* nfa = post2nfa(post);
-  return accepted(nfa, s);
+  Nfa* nfa = post2nfa(post);
+  const bool is_accepted = accepted(nfa, s);
+  delete_nfa(nfa);
+  return is_accepted;
 }
 
 /// @details Simulates the NFA by moving between the possible set of states.

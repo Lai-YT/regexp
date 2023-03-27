@@ -150,15 +150,11 @@ static void test_accepted() {
 
 static void test_all_regexp() {
   const char* re = "(a|b)*abb";  // consists only a/b and ends with abb
-  const char* post = re2post(re);
-  Nfa* nfa = post2nfa(post);
 
-  assert_true(accepted(nfa, "abb"));
-  assert_true(accepted(nfa, "babb"));
-  assert_true(accepted(nfa, "bbbbabb"));
-  assert_true(accepted(nfa, "abaabbaabb"));
-  assert_false(accepted(nfa, "abaabbbb"));
-  assert_false(accepted(nfa, "abaabbab"));
-
-  delete_nfa(nfa);
+  assert_true(regexp(re, "abb"));
+  assert_true(regexp(re, "babb"));
+  assert_true(regexp(re, "bbbbabb"));
+  assert_true(regexp(re, "abaabbaabb"));
+  assert_false(regexp(re, "abaabbbb"));
+  assert_false(regexp(re, "abaabbab"));
 }
