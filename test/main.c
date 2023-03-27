@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "map.h"
 #include "nfa.h"
 #include "post2nfa.h"
 #include "re2post.h"
@@ -56,6 +57,11 @@ int main(void) {
       cmocka_unit_test(test_delete),
       cmocka_unit_test(test_resize_double_up),
       cmocka_unit_test(test_set_iterator),
+      // map.h
+      cmocka_unit_test(test_map_insert_and_search),
+      cmocka_unit_test(test_map_delete),
+      cmocka_unit_test(test_map_capacity_should_grow),
+      cmocka_unit_test(test_map_iterator),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
