@@ -1,6 +1,7 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <stdbool.h>
 #include <stddef.h>
 
 #ifndef MAP_BASE_CAPACITY
@@ -30,5 +31,24 @@ void* get_value(Map*, int key);
 /// @brief Deletes the key and its val from map if the key exists.
 /// @note The val is not freed since its ownership isn't taken.
 void delete_pair(Map*, int key);
+
+typedef struct MapIterator MapIterator;
+
+/// @note The iterator becomes invalid once an operation is made during
+/// iteration.
+MapIterator* create_map_iterator(Map*);
+void delete_map_iterator(MapIterator*);
+
+/// @exception Assertion error if no preceding call on to_next.
+int get_current_key(MapIterator*);
+
+/// @exception Assertion error if no preceding call on to_next.
+void* get_current_value(MapIterator*);
+
+// TODO: rename after the conflict is resolved
+bool has_next_xx(MapIterator*);
+
+/// @exception Assertion error if there's no more to_next.
+void to_next(MapIterator*);
 
 #endif /* end of include guard: MAP_H */

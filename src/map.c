@@ -1,5 +1,7 @@
 #include "map.h"
 
+#include <assert.h>
+#include <stdbool.h>
 #include <stddef.h>  // size_t
 #include <stdlib.h>
 
@@ -180,4 +182,47 @@ static void resize_map(Map* old, size_t capacity) {
   *new = ht_to_free;
   // free the pairs from old and the map itself from new
   delete_map(new);
+}
+
+struct MapIterator {
+  size_t pos;
+  unsigned seen_so_far;
+  Map* map;
+};
+
+MapIterator* create_map_iterator(Map* map) {
+  MapIterator* itr = malloc(sizeof(MapIterator));
+  itr->map = map;
+  itr->pos = 0;
+  itr->seen_so_far = 0;
+  return itr;
+}
+
+void delete_map_iterator(MapIterator* itr) {
+  free(itr);
+}
+
+bool has_next_xx(MapIterator* itr) {
+  return itr->seen_so_far != itr->map->size;
+}
+
+void to_next(MapIterator* itr) {
+  assert(has_next_xx(itr));
+  for (itr->pos++; itr->pos < itr->map->capacity; itr->pos++) {
+    if (itr->map->pairs[itr->pos]
+        && itr->map->pairs[itr->pos] != PAIR_DELETED_MARKER) {
+      itr->seen_so_far++;
+      return;
+    }
+  }
+}
+
+int get_current_key(MapIterator* itr) {
+  assert(itr->seen_so_far != 0);
+  return itr->map->pairs[itr->pos]->key;
+}
+
+void* get_current_value(MapIterator* itr) {
+  assert(itr->seen_so_far != 0);
+  return itr->map->pairs[itr->pos]->val;
 }
