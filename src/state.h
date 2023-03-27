@@ -10,6 +10,9 @@ enum {
 typedef struct State {
   int label;
   struct State** outs;
+  /// @brief The unique id field is for NFAs to better handle their interior
+  /// states.
+  int id;
 } State;
 
 /// @brief A labeled state have 1 labeled transition, an epsilon state (label ==
