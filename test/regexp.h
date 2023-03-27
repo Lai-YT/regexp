@@ -3,8 +3,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "../src/nfa.h"
 #include "../src/regexp.h"
 #include "../src/set.h"
+#include "../src/state.h"
 
 // clang-format off
 // cmocka allows test applications to use custom definitions of C standard

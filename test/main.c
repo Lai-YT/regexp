@@ -3,10 +3,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "nfa.h"
 #include "post2nfa.h"
 #include "re2post.h"
 #include "regexp.h"
 #include "set.h"
+#include "state.h"
 
 // clang-format off
 // cmocka allows test applications to use custom definitions of C standard
@@ -24,11 +26,13 @@ int main(void) {
       cmocka_unit_test(test_re2post_concat_with_paren),
       cmocka_unit_test(test_re2post_union_with_paren),
       cmocka_unit_test(test_re2post_mix),
-      // post2nfa.h
+      // state.h
       cmocka_unit_test(test_create_labeled_state),
       cmocka_unit_test(test_create_epsilon_state),
       cmocka_unit_test(test_create_accepting_state),
+      // nfa.h
       cmocka_unit_test(test_create_nfa),
+      // post2nfa.h
       cmocka_unit_test(test_post2nfa_concat_only),
       cmocka_unit_test(test_post2nfa_union_only_single),
       cmocka_unit_test(test_post2nfa_union_only_complex),
