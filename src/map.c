@@ -18,6 +18,10 @@ struct Map {
   MapPair** pairs;
 };
 
+size_t get_size(Map* map) {
+  return map->size;
+}
+
 /// @note val may or may not be heap-allocated, its ownership isn't taken.
 static MapPair* create_map_pair(int key, void* val) {
   MapPair* item = malloc(sizeof(MapPair));

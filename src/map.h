@@ -12,6 +12,8 @@
 
 typedef struct Map Map;
 
+size_t get_size(Map*);
+
 /// @note Should be freed after use with delete_map.
 Map* create_map();
 

@@ -22,6 +22,7 @@ static void test_map_insert_and_search() {
     insert_pair(map, keys[i], vals + i);
   }
 
+  assert_int_equal(get_size(map), 3);
   for (size_t i = 0; i < 3; i++) {
     int* val = get_value(map, keys[i]);
     assert_non_null(val);
@@ -43,6 +44,7 @@ void test_map_delete() {
 
   delete_pair(map, keys[1]);
 
+  assert_int_equal(get_size(map), 2);
   assert_true(get_value(map, keys[0]) && get_value(map, keys[0]) == vals);
   assert_null(get_value(map, keys[1]));
   assert_true(get_value(map, keys[2]) && get_value(map, keys[2]) == vals + 2);
@@ -67,6 +69,7 @@ void test_map_capacity_should_grow() {
     insert_pair(map, keys[i], vals + i);
   }
 
+  assert_int_equal(get_size(map), NUM_OF_PAIRS);
   for (size_t i = 0; i < NUM_OF_PAIRS; i++) {
     int* val = get_value(map, keys[i]);
     assert_non_null(val);
