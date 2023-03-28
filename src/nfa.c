@@ -7,8 +7,7 @@
 #include "state.h"
 
 Nfa* create_nfa(State* start, State* accept) {
-  Nfa* n;
-  n = malloc(sizeof *n);
+  Nfa* n = malloc(sizeof(Nfa));
   n->start = start;
   n->accept = accept;
   return n;

@@ -25,8 +25,7 @@ size_t num_of_epsilon_outs(int label) {
 static int state_id = 0;
 
 State* create_state(const int label, State** outs) {
-  State* new_state;
-  new_state = malloc(sizeof *new_state);
+  State* new_state = malloc(sizeof(State));
   new_state->label = label;
   new_state->id = state_id++;
 

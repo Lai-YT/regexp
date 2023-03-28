@@ -3,8 +3,7 @@
 #include <stdlib.h>
 
 List* create_list(void* val) {
-  List* l;
-  l = malloc(sizeof *l);
+  List* l = malloc(sizeof(List));
   l->val = val;
   l->next = NULL;
   return l;
