@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "set.h"
+#include "map.h"
 #include "state.h"
 
 Nfa* create_nfa(State* start, State* accept) {
@@ -13,54 +13,38 @@ Nfa* create_nfa(State* start, State* accept) {
   return n;
 }
 
-/// @brief Collects all of the states reachable from start into the set.
-/// @param states Set of states which the states will be inserted into.
+/// @brief Collects all of the states reachable from start into the map.
+/// @param states Mapping of states which the states will be inserted into.
 /// @param start The start state which all the states reachable from it will be
 /// collected.
-static void collect_states(Set* states, State* start) {
-  if (has_key(states, start)) {
+static void collect_reachable_states(Map* states, State* start) {
+  if (get_value(states, start->id)) {
     return;
   }
-  insert_key(states, start);
+  insert_pair(states, start->id, start);
   if (start->label != ACCEPT) {
-    collect_states(states, start->outs[0]);
-    if (start->label == SPLIT) {
-      collect_states(states, start->outs[1]);
+    for (int i = 0; i < num_of_outs(start->label); i++) {
+      collect_reachable_states(states, start->outs[i]);
     }
   }
 }
 
 /// @brief Deletes all of the states reachable from s.
-static void delete_state_chain(State* s);
+static void delete_reachable_states(State* s) {
+  Map* states_to_delete = create_map();
+  collect_reachable_states(states_to_delete, s);
+
+  MapIterator* itr = create_map_iterator(states_to_delete);
+  while (has_next(itr)) {
+    to_next(itr);
+    delete_state(get_current_value(itr));
+  }
+  delete_map_iterator(itr);
+
+  delete_map(states_to_delete);
+}
 
 void delete_nfa(Nfa* nfa) {
-  delete_state_chain(nfa->start);
+  delete_reachable_states(nfa->start);
   free(nfa);
-}
-
-/// @brief Deletes all of the states that are reachable from state and are in
-/// the set.
-/// @note A helper function for delete_state_chain.
-static void delete_state_chain_recursion(Set* states_to_delete, State* state) {
-  if (!has_key(states_to_delete, state)) {
-    return;
-  }
-  // Note that you have to mark as deleted before dealing with the outs,
-  // otherwise if there's a cycle, you'll be in an infinite loop, which causes
-  // the stack to overflow.
-  delete_key(states_to_delete, state);
-  if (state->label != ACCEPT) {
-    delete_state_chain_recursion(states_to_delete, state->outs[0]);
-    if (state->label == SPLIT) {
-      delete_state_chain_recursion(states_to_delete, state->outs[1]);
-    }
-  }
-  delete_state(state);
-}
-
-static void delete_state_chain(State* s) {
-  Set* states_to_delete = create_set();
-  collect_states(states_to_delete, s);
-  delete_state_chain_recursion(states_to_delete, s);
-  delete_set(states_to_delete);
 }

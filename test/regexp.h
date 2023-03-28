@@ -3,9 +3,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "../src/map.h"
 #include "../src/nfa.h"
 #include "../src/regexp.h"
-#include "../src/set.h"
 #include "../src/state.h"
 
 // clang-format off
@@ -17,17 +17,17 @@
 static void test_epsilon_closure_on_epsilon() {
   State* accept = create_state(ACCEPT, NULL);
   State* start = create_state(EPSILON, &accept);
-  Set* from = create_set();
-  insert_key(from, start);
+  Map* from = create_map();
+  insert_pair(from, start->id, start);
 
-  Set* closure = epsilon_closure(from);
+  Map* closure = epsilon_closure(from);
 
-  assert_int_equal(closure->size, 2);
-  assert_true(has_key(closure, start));
-  assert_true(has_key(closure, accept));
+  assert_int_equal(get_size(closure), 2);
+  assert_true(get_value(closure, start->id));
+  assert_true(get_value(closure, accept->id));
 
-  delete_set(closure);
-  delete_set(from);
+  delete_map(closure);
+  delete_map(from);
   delete_state(start);
   delete_state(accept);
 }
@@ -37,18 +37,18 @@ static void test_epsilon_closure_on_split() {
   State* accept2 = create_state(ACCEPT, NULL);
   State* outs[2] = {accept1, accept2};
   State* start = create_state(SPLIT, outs);
-  Set* from = create_set();
-  insert_key(from, start);
+  Map* from = create_map();
+  insert_pair(from, start->id, start);
 
-  Set* closure = epsilon_closure(from);
+  Map* closure = epsilon_closure(from);
 
-  assert_int_equal(closure->size, 3);
-  assert_true(has_key(closure, start));
-  assert_true(has_key(closure, accept1));
-  assert_true(has_key(closure, accept2));
+  assert_int_equal(get_size(closure), 3);
+  assert_true(get_value(closure, start->id));
+  assert_true(get_value(closure, accept1->id));
+  assert_true(get_value(closure, accept2->id));
 
-  delete_set(closure);
-  delete_set(from);
+  delete_map(closure);
+  delete_map(from);
   delete_state(start);
   delete_state(accept2);
   delete_state(accept1);
@@ -58,18 +58,18 @@ static void test_epsilon_closure_on_chain() {
   State* accept = create_state(ACCEPT, NULL);
   State* s = create_state(EPSILON, &accept);
   State* start = create_state(EPSILON, &s);
-  Set* from = create_set();
-  insert_key(from, start);
+  Map* from = create_map();
+  insert_pair(from, start->id, start);
 
-  Set* closure = epsilon_closure(from);
+  Map* closure = epsilon_closure(from);
 
-  assert_int_equal(closure->size, 3);
-  assert_true(has_key(closure, start));
-  assert_true(has_key(closure, s));
-  assert_true(has_key(closure, accept));
+  assert_int_equal(get_size(closure), 3);
+  assert_true(get_value(closure, start->id));
+  assert_true(get_value(closure, s->id));
+  assert_true(get_value(closure, accept->id));
 
-  delete_set(closure);
-  delete_set(from);
+  delete_map(closure);
+  delete_map(from);
   delete_state(start);
   delete_state(accept);
   delete_state(s);
@@ -82,18 +82,18 @@ static void test_epsilon_closure_duplicate() {
   // introduce an epsilon loop
   accept->label = EPSILON;
   accept->outs[0] = start;
-  Set* from = create_set();
-  insert_key(from, start);
+  Map* from = create_map();
+  insert_pair(from, start->id, start);
 
-  Set* closure = epsilon_closure(from);
+  Map* closure = epsilon_closure(from);
 
-  assert_int_equal(closure->size, 3);
-  assert_true(has_key(closure, start));
-  assert_true(has_key(closure, s));
-  assert_true(has_key(closure, accept));
+  assert_int_equal(get_size(closure), 3);
+  assert_true(get_value(closure, start->id));
+  assert_true(get_value(closure, s->id));
+  assert_true(get_value(closure, accept->id));
 
-  delete_set(closure);
-  delete_set(from);
+  delete_map(closure);
+  delete_map(from);
   delete_state(start);
   delete_state(accept);
   delete_state(s);
@@ -104,16 +104,16 @@ static void test_move_should_be_one_hop_only() {
   State* accept = create_state(ACCEPT, NULL);
   State* a2 = create_state('a', &accept);
   State* a1 = create_state('a', &a2);
-  Set* from = create_set();
-  insert_key(from, a1);
+  Map* from = create_map();
+  insert_pair(from, a1->id, a1);
 
-  Set* moves = move(from, 'a');
+  Map* moves = move(from, 'a');
 
-  assert_int_equal(moves->size, 1);
-  assert_true(has_key(moves, a2));
+  assert_int_equal(get_size(moves), 1);
+  assert_true(get_value(moves, a2->id));
 
-  delete_set(moves);
-  delete_set(from);
+  delete_map(moves);
+  delete_map(from);
   delete_state(a2);
   delete_state(a1);
   delete_state(accept);
@@ -124,15 +124,15 @@ static void test_move_null() {
   State* accept = create_state(ACCEPT, NULL);
   State* b = create_state('b', &accept);
   State* a = create_state('a', &b);
-  Set* from = create_set();
-  insert_key(from, a);
+  Map* from = create_map();
+  insert_pair(from, a->id, a);
 
-  Set* moves = move(from, 'c');
+  Map* moves = move(from, 'c');
 
-  assert_int_equal(moves->size, 0);
+  assert_int_equal(get_size(moves), 0);
 
-  delete_set(moves);
-  delete_set(from);
+  delete_map(moves);
+  delete_map(from);
   delete_state(a);
   delete_state(b);
   delete_state(accept);

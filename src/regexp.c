@@ -4,9 +4,9 @@
 #include <stdlib.h>
 
 #include "list.h"
+#include "map.h"
 #include "post2nfa.h"
 #include "re2post.h"
-#include "set.h"
 
 bool regexp(const char* re, const char* s) {
   const char* post = re2post(re);
@@ -20,14 +20,14 @@ bool regexp(const char* re, const char* s) {
 /// If the accepting state is in the set after the last input character is
 /// consumed, the NFA accepts the string.
 bool accepted(const Nfa* nfa, const char* s) {
-  Set* start = create_set();
-  insert_key(start, nfa->start);
-  Set* states = epsilon_closure(start);
+  Map* start = create_map();
+  insert_pair(start, nfa->start->id, nfa->start);
+  Map* states = epsilon_closure(start);
   for (; *s; s++) {
-    Set* moves = move(states, *s);
-    delete_set(states);
+    Map* moves = move(states, *s);
+    delete_map(states);
     states = epsilon_closure(moves);
-    delete_set(moves);
+    delete_map(moves);
   }
 
   /// Thompson's algorithm proves that: For any regular language L, there is an
@@ -35,13 +35,13 @@ bool accepted(const Nfa* nfa, const char* s) {
   /// distinct from the starting state s.
   /// See
   /// https://courses.engr.illinois.edu/cs374/fa2018/notes/models/04-nfa.pdf.
-  const bool accepted = has_key(states, nfa->accept);
-  delete_set(states);
-  delete_set(start);
+  const bool accepted = get_value(states, nfa->accept->id);
+  delete_map(states);
+  delete_map(start);
   return accepted;
 }
 
-Set* epsilon_closure(Set* start) {
+Map* epsilon_closure(Map* start) {
   List* stack = NULL;
 
 #define PUSH(s)                 \
@@ -55,24 +55,24 @@ Set* epsilon_closure(Set* start) {
   tmp->next = NULL;    \
   delete_list(tmp);
 
-  Set* closure = create_set();
+  Map* closure = create_map();
   // Inserts all of the start states into the closure and the stack.
   {  // limit the scope of itr
-    SetIterator* itr = create_iterator(start);
+    MapIterator* itr = create_map_iterator(start);
     while (has_next(itr)) {
-      next(itr);
-      PUSH(get_key(itr));
-      insert_key(closure, get_key(itr));
+      to_next(itr);
+      PUSH(get_current_value(itr));
+      insert_pair(closure, get_current_key(itr), get_current_value(itr));
     }
-    delete_iterator(itr);
+    delete_map_iterator(itr);
   }
   while (stack) {
     State* top = stack->val;
     POP();
     for (size_t i = 0; i < num_of_epsilon_outs(top->label); i++) {
       State* out = top->outs[i];
-      if (!has_key(closure, out)) {
-        insert_key(closure, out);
+      if (!get_value(closure, out->id)) {
+        insert_pair(closure, out->id, out);
         PUSH(out);
       }
     }
@@ -83,16 +83,16 @@ Set* epsilon_closure(Set* start) {
 #undef PUSH
 }
 
-Set* move(Set* from, char c) {
-  Set* outs = create_set();
-  SetIterator* itr = create_iterator(from);
+Map* move(Map* from, char c) {
+  Map* outs = create_map();
+  MapIterator* itr = create_map_iterator(from);
   while (has_next(itr)) {
-    next(itr);
-    State* s = get_key(itr);
+    to_next(itr);
+    State* s = get_current_value(itr);
     if (s->label == c) {
-      insert_key(outs, s->outs[0]);
+      insert_pair(outs, s->outs[0]->id, s->outs[0]);
     }
   }
-  delete_iterator(itr);
+  delete_map_iterator(itr);
   return outs;
 }
