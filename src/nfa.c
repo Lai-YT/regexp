@@ -17,30 +17,22 @@ Nfa* create_nfa(State* start, State* accept) {
 /// @param states Mapping of states which the states will be inserted into.
 /// @param start The start state which all the states reachable from it will be
 /// collected.
-static void collect_states(Map* states, State* start) {
+static void collect_reachable_states(Map* states, State* start) {
   if (get_value(states, start->id)) {
     return;
   }
   insert_pair(states, start->id, start);
   if (start->label != ACCEPT) {
-    collect_states(states, start->outs[0]);
-    if (start->label == SPLIT) {
-      collect_states(states, start->outs[1]);
+    for (int i = 0; i < num_of_outs(start->label); i++) {
+      collect_reachable_states(states, start->outs[i]);
     }
   }
 }
 
 /// @brief Deletes all of the states reachable from s.
-static void delete_state_chain(State* s);
-
-void delete_nfa(Nfa* nfa) {
-  delete_state_chain(nfa->start);
-  free(nfa);
-}
-
-static void delete_state_chain(State* s) {
+static void delete_reachable_states(State* s) {
   Map* states_to_delete = create_map();
-  collect_states(states_to_delete, s);
+  collect_reachable_states(states_to_delete, s);
 
   MapIterator* itr = create_map_iterator(states_to_delete);
   while (has_next(itr)) {
@@ -50,4 +42,9 @@ static void delete_state_chain(State* s) {
   delete_map_iterator(itr);
 
   delete_map(states_to_delete);
+}
+
+void delete_nfa(Nfa* nfa) {
+  delete_reachable_states(nfa->start);
+  free(nfa);
 }
