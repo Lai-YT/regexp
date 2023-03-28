@@ -3,14 +3,14 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-int num_of_outs(int label) {
+size_t num_of_outs(int label) {
   if (label == SPLIT) {
     return 2;
   }
   return 1;
 }
 
-int num_of_epsilon_outs(int label) {
+size_t num_of_epsilon_outs(int label) {
   if (label == SPLIT) {
     return 2;
   }

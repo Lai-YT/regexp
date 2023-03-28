@@ -1,6 +1,8 @@
 #ifndef STATE_H
 #define STATE_H
 
+#include <stddef.h>
+
 enum {
   EPSILON = 128,
   SPLIT = 129,
@@ -19,10 +21,10 @@ typedef struct State {
 /// EPSILON) has 1 epsilon transition, a spliting state (label == SPLIT) has 2
 /// epsilon transitions, an accepting state (label == ACCEPT) has 1 reserved
 /// transition.
-int num_of_outs(int label);
+size_t num_of_outs(int label);
 
 /// @brief An epsilon state has 1, a spliting state has 2, others have 0.
-int num_of_epsilon_outs(int label);
+size_t num_of_epsilon_outs(int label);
 
 /// @note The accepting state may later become part of an NFA and turns into an
 /// epsilon state. outs is ignored under this condition since the space is only

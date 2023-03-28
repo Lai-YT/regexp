@@ -1,5 +1,6 @@
 #include "nfa.h"
 
+#include <stddef.h>
 #include <stdlib.h>
 
 #include "map.h"
@@ -23,7 +24,7 @@ static void collect_reachable_states(Map* states, State* start) {
   }
   insert_pair(states, start->id, start);
   if (start->label != ACCEPT) {
-    for (int i = 0; i < num_of_outs(start->label); i++) {
+    for (size_t i = 0; i < num_of_outs(start->label); i++) {
       collect_reachable_states(states, start->outs[i]);
     }
   }
