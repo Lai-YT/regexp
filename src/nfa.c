@@ -38,29 +38,16 @@ void delete_nfa(Nfa* nfa) {
   free(nfa);
 }
 
-/// @brief Deletes all of the states that are reachable from state and are in
-/// the map.
-/// @note A helper function for delete_state_chain.
-static void delete_state_chain_recursion(Map* states_to_delete, State* state) {
-  if (!get_value(states_to_delete, state->id)) {
-    return;
-  }
-  // Note that you have to mark as deleted before dealing with the outs,
-  // otherwise if there's a cycle, you'll be in an infinite loop, which causes
-  // the stack to overflow.
-  delete_pair(states_to_delete, state->id);
-  if (state->label != ACCEPT) {
-    delete_state_chain_recursion(states_to_delete, state->outs[0]);
-    if (state->label == SPLIT) {
-      delete_state_chain_recursion(states_to_delete, state->outs[1]);
-    }
-  }
-  delete_state(state);
-}
-
 static void delete_state_chain(State* s) {
   Map* states_to_delete = create_map();
   collect_states(states_to_delete, s);
-  delete_state_chain_recursion(states_to_delete, s);
+
+  MapIterator* itr = create_map_iterator(states_to_delete);
+  while (has_next(itr)) {
+    to_next(itr);
+    delete_state(get_current_value(itr));
+  }
+  delete_map_iterator(itr);
+
   delete_map(states_to_delete);
 }
