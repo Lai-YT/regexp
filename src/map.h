@@ -45,8 +45,7 @@ int get_current_key(MapIterator*);
 /// @exception Assertion error if no preceding call on to_next.
 void* get_current_value(MapIterator*);
 
-// TODO: rename after the conflict is resolved
-bool has_next_xx(MapIterator*);
+bool has_next(MapIterator*);
 
 /// @exception Assertion error if there's no more to_next.
 void to_next(MapIterator*);

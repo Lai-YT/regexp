@@ -8,7 +8,6 @@
 #include "post2nfa.h"
 #include "re2post.h"
 #include "regexp.h"
-#include "set.h"
 #include "state.h"
 
 // clang-format off
@@ -52,11 +51,6 @@ int main(void) {
       cmocka_unit_test(test_move_null),
       cmocka_unit_test(test_accepted),
       cmocka_unit_test(test_all_regexp),
-      // set.h
-      cmocka_unit_test(test_insert_and_search),
-      cmocka_unit_test(test_delete),
-      cmocka_unit_test(test_resize_double_up),
-      cmocka_unit_test(test_set_iterator),
       // map.h
       cmocka_unit_test(test_map_insert_and_search),
       cmocka_unit_test(test_map_delete),

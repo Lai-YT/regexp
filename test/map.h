@@ -90,7 +90,7 @@ static void test_map_iterator() {
 
   MapIterator* itr = create_map_iterator(map);
   int i = 0;
-  while (has_next_xx(itr)) {
+  while (has_next(itr)) {
     to_next(itr);
     const int key = get_current_key(itr);
     assert_false(has_seen[key]);

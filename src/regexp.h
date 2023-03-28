@@ -4,8 +4,8 @@
 #include <stdbool.h>
 
 #include "list.h"
+#include "map.h"
 #include "post2nfa.h"
-#include "set.h"
 
 /// @brief Returns whether s is matched by re.
 bool regexp(const char* re, const char* s);
@@ -16,10 +16,10 @@ bool accepted(const Nfa*, const char*);
 
 /// @brief Returns the states that are reachable from start with only epsilon
 /// transitions, including all of the start states itself.
-Set* epsilon_closure(Set* start);
+Map* epsilon_closure(Map* start);
 
-/// @brief Returns the states that are reachable from the set of states on label
+/// @brief Returns the states that are reachable from the map of states on label
 /// c with non-epsilon moves.
-Set* move(Set*, char c);
+Map* move(Map*, char c);
 
 #endif /* end of include guard: REGEXP_H */

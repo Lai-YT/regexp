@@ -202,12 +202,12 @@ void delete_map_iterator(MapIterator* itr) {
   free(itr);
 }
 
-bool has_next_xx(MapIterator* itr) {
+bool has_next(MapIterator* itr) {
   return itr->seen_so_far != itr->map->size;
 }
 
 void to_next(MapIterator* itr) {
-  assert(has_next_xx(itr));
+  assert(has_next(itr));
   for (itr->pos++; itr->pos < itr->map->capacity; itr->pos++) {
     if (itr->map->pairs[itr->pos]
         && itr->map->pairs[itr->pos] != PAIR_DELETED_MARKER) {
