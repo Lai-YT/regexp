@@ -22,6 +22,7 @@ static void test_epsilon_closure_on_epsilon() {
 
   Map* closure = epsilon_closure(from);
 
+  assert_int_equal(get_size(closure), 2);
   assert_true(get_value(closure, start->id));
   assert_true(get_value(closure, accept->id));
 
@@ -41,6 +42,7 @@ static void test_epsilon_closure_on_split() {
 
   Map* closure = epsilon_closure(from);
 
+  assert_int_equal(get_size(closure), 3);
   assert_true(get_value(closure, start->id));
   assert_true(get_value(closure, accept1->id));
   assert_true(get_value(closure, accept2->id));
@@ -61,6 +63,7 @@ static void test_epsilon_closure_on_chain() {
 
   Map* closure = epsilon_closure(from);
 
+  assert_int_equal(get_size(closure), 3);
   assert_true(get_value(closure, start->id));
   assert_true(get_value(closure, s->id));
   assert_true(get_value(closure, accept->id));
@@ -84,6 +87,7 @@ static void test_epsilon_closure_duplicate() {
 
   Map* closure = epsilon_closure(from);
 
+  assert_int_equal(get_size(closure), 3);
   assert_true(get_value(closure, start->id));
   assert_true(get_value(closure, s->id));
   assert_true(get_value(closure, accept->id));
@@ -105,6 +109,7 @@ static void test_move_should_be_one_hop_only() {
 
   Map* moves = move(from, 'a');
 
+  assert_int_equal(get_size(moves), 1);
   assert_true(get_value(moves, a2->id));
 
   delete_map(moves);
@@ -124,9 +129,7 @@ static void test_move_null() {
 
   Map* moves = move(from, 'c');
 
-  assert_false(get_value(moves, a->id));
-  assert_false(get_value(moves, b->id));
-  assert_false(get_value(moves, accept->id));
+  assert_int_equal(get_size(moves), 0);
 
   delete_map(moves);
   delete_map(from);
