@@ -1,4 +1,4 @@
-<h3 align="center"><i>regexp</i></h3>
+<h1 align="center"><i>regexp</i></h1>
 
 <div align="center">
 
