@@ -9,24 +9,24 @@
 /// @brief operators eat up symbols immediately, while the two binary operators,
 /// . and |, don't. Since the union operator is explicitly notated in the
 /// regular expression, it's being counted.
-typedef struct {
+typedef struct Unit {
   int num_of_union;
   int num_of_unit;
-} unit_t;
+} Unit;
 
 /// @brief whether the buffer may overflow after adding explicit concatenation
 /// symbols.
 static bool buf_may_overflow(const char* re);
 static bool has_too_many_nested_parens(const int depth);
 
-static bool has_unit_to_operate(unit_t unit);
-static bool has_units_to_concat(unit_t unit);
-static bool has_units_to_union(unit_t unit);
+static bool has_unit_to_operate(Unit unit);
+static bool has_units_to_concat(Unit unit);
+static bool has_units_to_union(Unit unit);
 
-static bool has_stashed_unit(unit_t* unit_stack, unit_t* top_unit);
-static void stash_unit(unit_t** unit_stack, unit_t unit);
-static void restore_unit(unit_t** unit_stack, unit_t* unit);
-static void init_unit(unit_t* unit);
+static bool has_stashed_unit(Unit* stack, Unit* top);
+static void stash_unit(Unit** stack, Unit unit);
+static void restore_unit(Unit** stack, Unit* unit);
+static void init_unit(Unit* unit);
 
 /// @brief Tries to append a explicit concatenation operator to the result.
 /// @param unit records the number of concatenations awaiting.
@@ -36,12 +36,12 @@ static void init_unit(unit_t* unit);
 /// implementation. But there shouldn't be more than 1 pair of un-concatenated
 /// units awaiting since concatenation is treated as left-associative, so an if
 /// statement suffices.
-static void try_append_concat(unit_t* unit, char** result);
+static void try_append_concat(Unit* unit, char** result);
 
 /// @brief Tries to append union operators to the result.
 /// @param unit records the number of unions awaiting.
 /// @param result appends the operator to.
-static void try_append_unions(unit_t* unit, char** result);
+static void try_append_unions(Unit* unit, char** result);
 
 /// @details Tracks the parentheses with a stack, and counts the number
 /// of operation units so we know where to place an operator after every two
@@ -60,9 +60,9 @@ char* re2post(const char* re) {
   /// @brief A stack. Stashing the nested parentheses units seen so far, so we
   /// can restore them after converting inner nested parenthesized units. Treat
   /// the converted unit as a single unit, and resume the conversion.
-  unit_t paren_units[MAX_NESTED_DEPTH];
-  unit_t* top_unit = paren_units;  // it's in fact the one above the top
-  unit_t curr_paren_unit;          // the unit that we're now converting
+  Unit paren_units[MAX_NESTED_DEPTH];
+  Unit* top_unit = paren_units;  // it's in fact the one above the top
+  Unit curr_paren_unit;          // the unit that we're now converting
   init_unit(&curr_paren_unit);
 
   for (; *re; re++) {
@@ -135,19 +135,19 @@ char* re2post(const char* re) {
   return result;
 }
 
-static void init_unit(unit_t* unit) {
-  *unit = (unit_t){.num_of_union = 0, .num_of_unit = 0};
+static void init_unit(Unit* unit) {
+  *unit = (Unit){.num_of_union = 0, .num_of_unit = 0};
 }
 
-static void stash_unit(unit_t** unit_stack, unit_t unit) {
-  **unit_stack = unit;
-  (*unit_stack)++;  // push
+static void stash_unit(Unit** stack, Unit unit) {
+  **stack = unit;
+  (*stack)++;  // push
 }
 
-static void restore_unit(unit_t** unit_stack, unit_t* unit) {
-  unit_t* top = *unit_stack - 1;
+static void restore_unit(Unit** stack, Unit* unit) {
+  Unit* top = *stack - 1;
   *unit = *top;
-  (*unit_stack)--;  // pop
+  (*stack)--;  // pop
 }
 
 static bool buf_may_overflow(const char* re) {
@@ -160,14 +160,14 @@ static bool has_too_many_nested_parens(const int depth) {
   return depth > MAX_NESTED_DEPTH;
 }
 
-static void try_append_concat(unit_t* unit, char** result) {
+static void try_append_concat(Unit* unit, char** result) {
   if (has_units_to_concat(*unit)) {
     --unit->num_of_unit;
     **result = EXPLICIT_CONCAT;
     (*result)++;
   }
 }
-static void try_append_unions(unit_t* unit, char** result) {
+static void try_append_unions(Unit* unit, char** result) {
   while (has_units_to_union(*unit)) {
     --unit->num_of_union;
     --unit->num_of_unit;
@@ -176,20 +176,20 @@ static void try_append_unions(unit_t* unit, char** result) {
   }
 }
 
-static bool has_unit_to_operate(unit_t unit) {
+static bool has_unit_to_operate(Unit unit) {
   return unit.num_of_unit > 0;
 }
 
-static bool has_units_to_concat(unit_t unit) {
+static bool has_units_to_concat(Unit unit) {
   // binary operator needs at least 2 units
   return unit.num_of_unit - unit.num_of_union >= 2;
 }
 
-static bool has_units_to_union(unit_t unit) {
+static bool has_units_to_union(Unit unit) {
   // binary operator needs at least 2 units
   return unit.num_of_union >= 1 && unit.num_of_unit >= 2;
 }
 
-static bool has_stashed_unit(unit_t* unit_stack, unit_t* top_unit) {
-  return top_unit != unit_stack;
+static bool has_stashed_unit(Unit* stack, Unit* top) {
+  return top != stack;
 }
