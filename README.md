@@ -109,6 +109,41 @@ Target rules:
     help     - Prints a help message with target rules
 ```
 
+### Codebase structure
+```
+regexp
+│   Makefile
+│   README.md
+│   ...
+└───bin
+│     regexp
+│     regexp_test_runner
+└───src
+│     main.c
+│     regexp.h
+│     regexp.c
+│     ...
+└───test
+│     main.c
+│     regexp.h
+│     regexp.c
+│     ...
+└───lib
+│     main.o
+│     regexp.o
+│     ...
+└───log
+      valgrind.log
+```
+
+- `bin/`: executables
+- `src/`: source files
+- `test/`: test files under `src/`.
+- `lib/`: object files
+- `log/`: output message of Valgrind
+> **Note**
+> There aren't any prefix or postfix on the filename of test files.
+
 ### Code formatting
 _regexp_ uses [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) as formatting tool.
 
