@@ -8,18 +8,10 @@
 #include "post2nfa.h"
 #include "re2post.h"
 
-bool regexp(const char* re, const char* s) {
-  const char* post = re2post(re);
-  Nfa* nfa = post2nfa(post);
-  const bool is_accepted = accepted(nfa, s);
-  delete_nfa(nfa);
-  return is_accepted;
-}
-
 /// @details Simulates the NFA by moving between the possible set of states.
 /// If the accepting state is in the set after the last input character is
 /// consumed, the NFA accepts the string.
-bool accepted(const Nfa* nfa, const char* s) {
+bool is_accepted(const Nfa* nfa, const char* s) {
   Map* start = create_map();
   insert_pair(start, nfa->start->id, nfa->start);
   Map* states = epsilon_closure(start);

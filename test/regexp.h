@@ -5,6 +5,8 @@
 
 #include "../src/map.h"
 #include "../src/nfa.h"
+#include "../src/post2nfa.h"
+#include "../src/re2post.h"
 #include "../src/regexp.h"
 #include "../src/state.h"
 
@@ -138,14 +140,14 @@ static void test_move_null() {
   delete_state(accept);
 }
 
-static void test_accepted() {
+static void test_is_accepted() {
   // a -> b -> accept
   State* accept = create_state(ACCEPT, NULL);
   State* b = create_state('b', &accept);
   State* a = create_state('a', &b);
   Nfa* nfa = create_nfa(a, accept);
 
-  assert_true(accepted(nfa, "ab"));
+  assert_true(is_accepted(nfa, "ab"));
 
   delete_nfa(nfa);
 }
@@ -153,10 +155,15 @@ static void test_accepted() {
 static void test_all_regexp() {
   const char* re = "(a|b)*abb";  // consists only a/b and ends with abb
 
-  assert_true(regexp(re, "abb"));
-  assert_true(regexp(re, "babb"));
-  assert_true(regexp(re, "bbbbabb"));
-  assert_true(regexp(re, "abaabbaabb"));
-  assert_false(regexp(re, "abaabbbb"));
-  assert_false(regexp(re, "abaabbab"));
+  const char* post = re2post(re);
+  Nfa* nfa = post2nfa(post);
+
+  assert_true(is_accepted(nfa, "abb"));
+  assert_true(is_accepted(nfa, "babb"));
+  assert_true(is_accepted(nfa, "bbbbabb"));
+  assert_true(is_accepted(nfa, "abaabbaabb"));
+  assert_false(is_accepted(nfa, "abaabbbb"));
+  assert_false(is_accepted(nfa, "abaabbab"));
+
+  delete_nfa(nfa);
 }

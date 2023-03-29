@@ -7,12 +7,9 @@
 #include "map.h"
 #include "post2nfa.h"
 
-/// @brief Returns whether s is matched by re.
-bool regexp(const char* re, const char* s);
-
-/// @brief Simulates the NFA.
-/// @return whether the NFA accepts the string.
-bool accepted(const Nfa*, const char*);
+/// @return Whether the string is accepted by the NFA.
+/// @details Simulates the NFA.
+bool is_accepted(const Nfa*, const char*);
 
 /// @brief Returns the states that are reachable from start with only epsilon
 /// transitions, including all of the start states itself.
