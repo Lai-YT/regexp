@@ -41,19 +41,11 @@ bool accepted(const Nfa* nfa, const char* s) {
   return accepted;
 }
 
+static void push(List** stack, State* s);
+static State* pop(List** stack);
+
 Map* epsilon_closure(Map* start) {
   List* stack = NULL;
-
-#define PUSH(s)                 \
-  List* tmp = create_list((s)); \
-  append_list(tmp, stack);      \
-  stack = tmp;
-
-#define POP()          \
-  List* tmp = stack;   \
-  stack = stack->next; \
-  tmp->next = NULL;    \
-  delete_list(tmp);
 
   Map* closure = create_map();
   // Inserts all of the start states into the closure and the stack.
@@ -61,26 +53,38 @@ Map* epsilon_closure(Map* start) {
     MapIterator* itr = create_map_iterator(start);
     while (has_next(itr)) {
       to_next(itr);
-      PUSH(get_current_value(itr));
+      push(&stack, get_current_value(itr));
       insert_pair(closure, get_current_key(itr), get_current_value(itr));
     }
     delete_map_iterator(itr);
   }
+
   while (stack) {
-    State* top = stack->val;
-    POP();
+    State* top = pop(&stack);
     for (size_t i = 0; i < num_of_epsilon_outs(top->label); i++) {
       State* out = top->outs[i];
       if (!get_value(closure, out->id)) {
         insert_pair(closure, out->id, out);
-        PUSH(out);
+        push(&stack, out);
       }
     }
   }
   return closure;
+}
 
-#undef POP
-#undef PUSH
+static void push(List** stack, State* s) {
+  List* tmp = create_list((s));
+  append_list(tmp, *stack);
+  *stack = tmp;
+}
+
+static State* pop(List** stack) {
+  State* top = (*stack)->val;
+  List* top_list = *stack;
+  *stack = (*stack)->next;
+  top_list->next = NULL;
+  delete_list(top_list);
+  return top;
 }
 
 Map* move(Map* from, char c) {
