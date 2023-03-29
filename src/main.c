@@ -13,6 +13,7 @@
  * ============================================================================
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -33,14 +34,24 @@ int main(int argc, char* argv[]) {
   fprintf(stdout, CYAN "  string: %s\n" NO_COLOR, options.string);
 #endif
 
-  if (regexp(options.regexp, options.string)) {
+  const char* post = re2post(options.regexp);
+  if (!post) {
+    fprintf(stderr, RED "The regexp \"%s\" is ill-formed.\n" NO_COLOR,
+            options.regexp);
+    exit(EXIT_FAILURE);
+  }
+
+  Nfa* nfa = post2nfa(post);
+  bool matches_the_string = is_accepted(nfa, options.string);
+  if (matches_the_string) {
 #ifdef DEBUG
     fprintf(stdout, YELLOW "The regexp matches the string.\n" NO_COLOR);
 #endif
-    return 0;
-  }
+  } else {
 #ifdef DEBUG
-  fprintf(stdout, RED "The regexp doesn't match the string.\n" NO_COLOR);
+    fprintf(stdout, RED "The regexp doesn't match the string.\n" NO_COLOR);
 #endif
-  return 1;
+  }
+  delete_nfa(nfa);
+  return matches_the_string;
 }
