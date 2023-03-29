@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
 
   const char* post = re2post(options.regexp);
   if (!post) {
-    fprintf(stderr, RED "The regexp \"%s\" is ill-formed.\n" NO_COLOR,
+    fprintf(stderr, RED "The regexp \"%s\" is ill-formed or too long.\n" NO_COLOR,
             options.regexp);
     exit(EXIT_FAILURE);
   }
