@@ -87,11 +87,18 @@ regexp version: 0.0.1
 ```
 
 ### Example
+
+_regexp_ takes two arguments: a regular expression and a string to match.
 ```shell
-bin/regexp '(a|b)*abb' 'bababb'
+$ bin/regexp '(a|b)*abb' 'bababb'
 ```
 
 ## 🚀 Development <a name = "development"></a>
+There are several *make targets* to use.
+```shell
+$ make help
+```
+
 ```
 Target rules:
     all      - Compiles and generates binary file
@@ -100,6 +107,14 @@ Target rules:
     fmt      - Formats the source and test files
     clean    - Cleans the project by removing binaries
     help     - Prints a help message with target rules
+```
+
+### Code formatting
+_regexp_ uses [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) as formatting tool.
+
+Format source and test codes,
+```shell
+$ make fmt
 ```
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
