@@ -40,6 +40,7 @@ int main(void) {
       cmocka_unit_test(test_post2nfa_zero_or_one),
       cmocka_unit_test(test_post2nfa_one_or_more),
       cmocka_unit_test(test_post2nfa_mix),
+      cmocka_unit_test(test_post2nfa_concat_one_or_more),
       cmocka_unit_test(test_missing_operator_should_return_null),
       cmocka_unit_test(test_missing_operand_should_return_null),
       // regexp.h

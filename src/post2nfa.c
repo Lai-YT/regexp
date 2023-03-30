@@ -106,7 +106,10 @@ Nfa* post2nfa(const char* post) {
         State* outs[2] = {n->start, accept};
         State* come_back = create_state(SPLIT, outs);
         merge_state(n->accept, come_back);
-        PUSH(create_nfa(n->start, accept));
+        // this extra epsilon transition is necessary so that the link doesn't
+        // break when merging the start state in concatenation
+        State* start = create_state(EPSILON, &n->start);
+        PUSH(create_nfa(start, accept));
         free(n);
       } break;
       default: {
