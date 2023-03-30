@@ -20,6 +20,7 @@
 #include "args.h"
 #include "colors.h"
 #include "regexp.h"
+#include "visstate.h"
 
 int main(int argc, char* argv[]) {
   /* Read command line options */
@@ -36,12 +37,20 @@ int main(int argc, char* argv[]) {
 
   const char* post = re2post(options.regexp);
   if (!post) {
-    fprintf(stderr, RED "The regexp \"%s\" is ill-formed or too long.\n" NO_COLOR,
+    fprintf(stderr,
+            RED "The regexp \"%s\" is ill-formed or too long.\n" NO_COLOR,
             options.regexp);
     exit(EXIT_FAILURE);
   }
 
   Nfa* nfa = post2nfa(post);
+  {
+    FILE* graph = fopen("nfa.dot", "w");
+    nfa2dot(nfa, graph);
+    fclose(graph);
+    graph = NULL;
+  }
+
   bool matches_the_string = is_accepted(nfa, options.string);
   if (matches_the_string) {
 #ifdef DEBUG
