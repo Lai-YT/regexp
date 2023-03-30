@@ -23,13 +23,13 @@ static State* pop(List** stack) {
 static void state2dot(State* state, FILE* f) {
   for (size_t i = 0; i < num_of_outs(state->label); i++) {
     fprintf(f, "\t%d -> %d", state->id, state->outs[i]->id);
-    fputs(" [label = ", f);
+    fputs(" [label = \"", f);
     if (state->label > CHAR_MAX) {
       fputs("eps", f);  // epsilon, avoid unicode
     } else {
       fputc(state->label, f);
     }
-    fputs("]\n", f);
+    fputs("\"]\n", f);
   }
 }
 
@@ -54,7 +54,8 @@ static void states2dot(State* start, FILE* f) {
 void nfa2dot(const Nfa* nfa, FILE* f) {
   fputs("strict digraph nfa {\n", f);
   fputs("\trankdir=LR;\n", f);
-  fprintf(f, "\tnode [shape = doublecircle]; %d;", nfa->accept->id);
+  fputs("\tnode [fixedsize=true];\n", f);
+  fprintf(f, "\tnode [shape = doublecircle]; %d;\n", nfa->accept->id);
   fputs("\tnode [shape = circle];\n", f);
   states2dot(nfa->start, f);
   fputs("}\n", f);
