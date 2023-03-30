@@ -53,5 +53,5 @@ int main(int argc, char* argv[]) {
 #endif
   }
   delete_nfa(nfa);
-  return matches_the_string;
+  return matches_the_string ? EXIT_SUCCESS : EXIT_FAILURE;
 }
