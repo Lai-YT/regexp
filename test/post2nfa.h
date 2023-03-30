@@ -196,6 +196,64 @@ static void test_post2nfa_concat_one_or_more() {
   delete_nfa(nfa);
 }
 
+static void test_post2nfa_concat_zero_or_more() {
+  const char* post = "a*b*.";
+
+  Nfa* nfa = post2nfa(post);
+
+  assert_non_null(nfa);
+  ASSERT_LABEL(nfa->start, SPLIT);
+  {
+    {
+      State* start_of_a = nfa->start->outs[0];
+      ASSERT_LABEL(start_of_a, 'a');
+      State* out_of_a = start_of_a->outs[0];
+      ASSERT_LABEL(out_of_a, SPLIT);
+      {
+        assert_ptr_equal(out_of_a->outs[0], start_of_a);  // should come back
+        ASSERT_LABEL(out_of_a->outs[1], SPLIT);
+        {
+          {
+            State* start_of_b = out_of_a->outs[1]->outs[0];
+            ASSERT_LABEL(start_of_b, 'b');
+            State* out_of_b = start_of_b->outs[0];
+            ASSERT_LABEL(out_of_b, SPLIT);
+            {
+              assert_ptr_equal(out_of_b->outs[0],
+                               start_of_b);  // should come back
+              ASSERT_LABEL(out_of_b->outs[1], ACCEPT);
+            }
+          }
+          ASSERT_LABEL(out_of_a->outs[1]->outs[1], ACCEPT);
+        }
+      }
+    }
+    ASSERT_LABEL(nfa->start->outs[1], SPLIT);
+  }
+
+  delete_nfa(nfa);
+}
+
+static void test_post2nfa_concat_zero_or_one() {
+  const char* post = "a?b?.";
+
+  Nfa* nfa = post2nfa(post);
+
+  assert_non_null(nfa);
+  ASSERT_LABEL(nfa->start, SPLIT);
+  {
+    // "ab", no fastforward
+    ASSERT_NON_SPLIT_TRANSITION_LABELS(nfa->start->outs[0], 'a', EPSILON, SPLIT,
+                                       'b', EPSILON, ACCEPT);
+    {  // "", yet another fastforward
+      ASSERT_LABEL(nfa->start->outs[1], SPLIT);
+      ASSERT_LABEL(nfa->start->outs[1]->outs[1], ACCEPT);
+    }
+  }
+
+  delete_nfa(nfa);
+}
+
 static void test_missing_operator_should_return_null() {
   assert_null(post2nfa("ab"));
   assert_null(post2nfa("abc"));
