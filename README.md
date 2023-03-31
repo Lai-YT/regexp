@@ -42,7 +42,7 @@ $ git clone https://github.com/Lai-YT/regexp.git
 $ make
 ```
 
-The executable will be located in the bin/ folder and named regexp.
+The executable will be located in the `bin/` folder and named `regexp`.
 
 ## 🔧 Running the tests <a name = "tests"></a>
 _regexp_ uses [cmocka](https://cmocka.org/) for unit-testing and [Valgrind](https://valgrind.org/) for detecting memory management bugs.
@@ -87,7 +87,6 @@ regexp version: 0.0.1
 ```
 
 ### Example
-
 _regexp_ takes two arguments: a regular expression and a string to match.
 ```shell
 $ bin/regexp '(a|b)*abb' 'bababb'
@@ -114,6 +113,14 @@ Target rules:
     clean    - Cleans the project by removing binaries
     help     - Prints a help message with target rules
 ```
+
+### Implementation
+_regex_ matches strings with regular expressions in 3 steps:
+1. The regular expression is converted into a parenthesis-free postfix notation using the `.` operator to make concatenations explicit. This is implemented in [re2post.c](src/re2post.c).
+2. The postfixed regular expression is converted into a Nondeterministic Finite Automaton (NFA) using Thompson's algorithm. This step is implemented in [post2nfa.c](src/post2nfa.c).
+3. Reads in the input string character by character and walks along the NFA. If it stops at the accepting state when the entire string has been read, the string is considered a match. This step is implemented in [regexp.c](src/regexp.c).
+
+By breaking down the process into these 3 steps, _regexp_ is able to efficiently match strings with regular expressions.
 
 ### Codebase structure
 ```
@@ -160,4 +167,5 @@ $ make fmt
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 - http://swtch.com/~rsc/regexp/
+- Aho, Alfred V., Sethi, Ravi, Ullman, Jeffrey D. "Compilers: Principles, Techniques, and Tools," 2nd ed., Addison-Wesley, 2006, pp. 147-166
 - Thompson, Ken. Regular Expression Search Algorithm, Communications of the ACM 11(6) (June 1968), pp. 419-422
