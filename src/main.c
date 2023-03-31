@@ -31,6 +31,8 @@ int main(int argc, char* argv[]) {
   fprintf(stdout, CYAN "Command line options:\n" NO_COLOR);
   fprintf(stdout, CYAN "  help: %d\n" NO_COLOR, options.help);
   fprintf(stdout, CYAN "  version: %d\n" NO_COLOR, options.version);
+  fprintf(stdout, CYAN "  graph: %d\n" NO_COLOR, options.graph);
+  fprintf(stdout, CYAN "  filename: %s\n" NO_COLOR, options.filename);
   fprintf(stdout, CYAN "  regexp: %s\n" NO_COLOR, options.regexp);
   fprintf(stdout, CYAN "  string: %s\n" NO_COLOR, options.string);
 #endif
@@ -44,11 +46,21 @@ int main(int argc, char* argv[]) {
   }
 
   Nfa* nfa = post2nfa(post);
-  {
-    FILE* graph = fopen("nfa.dot", "w");
-    nfa2dot(nfa, graph);
-    fclose(graph);
-    graph = NULL;
+  if (options.graph) {
+    char filename[BUF_SIZE + 4];
+    snprintf(filename, BUF_SIZE + 4, "%s.dot", options.filename);
+    FILE* dotfile = fopen(filename, "w");
+    if (!dotfile) {
+      fprintf(stderr, RED "Can't open file: \"%s\"\n" NO_COLOR, filename);
+      exit(EXIT_FAILURE);
+    }
+    nfa2dot(nfa, dotfile);
+#ifdef DEBUG
+    fprintf(stdout, YELLOW "Dot file written to \"%s\"\n" NO_COLOR, filename);
+#endif
+    fclose(dotfile);
+    delete_nfa(nfa);
+    return EXIT_SUCCESS;
   }
 
   bool matches_the_string = is_accepted(nfa, options.string);
