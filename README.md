@@ -25,13 +25,13 @@
 - [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
-_regexp_ is a side project I wrote when learning _Compilers_. It's a simplified regular expression matching command line tool which converts the regular expression into an [NFA](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton) and then simulates the NFA using [Thompson's algorithm](https://en.wikipedia.org/wiki/Thompson%27s_construction).
+_regexp_ is a side project I wrote when learning _Compilers_. It's a command line tool for simplified [regular expression](https://en.wikipedia.org/wiki/Regular_expression) matching which converts the regular expression into an [NFA](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton) and simulates the NFA using [Thompson's algorithm](https://en.wikipedia.org/wiki/Thompson%27s_construction).
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 To try out _regexp_, clone (or download) this repo and compile the source locally.
 
 ### Prerequisites
-We use [GNU Make](https://www.gnu.org/software/make/) to control the generation of executable.
+We use [GNU Make](https://www.gnu.org/software/make/) to control the generation of executable and [gcc](https://gcc.gnu.org/) as the C compiler.
 
 ### Installing
 ```shell
@@ -42,7 +42,7 @@ $ git clone https://github.com/Lai-YT/regexp.git
 $ make
 ```
 
-The executable will locate in the `bin/` folder, named as `regexp`.
+The executable will be located in the bin/ folder and named regexp.
 
 ## 🔧 Running the tests <a name = "tests"></a>
 _regexp_ uses [cmocka](https://cmocka.org/) for unit-testing and [Valgrind](https://valgrind.org/) for detecting memory management bugs.
@@ -91,6 +91,12 @@ regexp version: 0.0.1
 _regexp_ takes two arguments: a regular expression and a string to match.
 ```shell
 $ bin/regexp '(a|b)*abb' 'bababb'
+```
+This exits with 0 if the string is matched by the regular expression or 1 if the regular expression is ill-formed or too long.
+
+You can check the exit code with the following command if you're on an Unix shell.
+```shell
+$ echo $?
 ```
 
 ## 🚀 Development <a name = "development"></a>
@@ -154,4 +160,4 @@ $ make fmt
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 - http://swtch.com/~rsc/regexp/
-- Thompson, Ken. Regular Expression Search Algorithm, Communications of the ACM 11(6) (June 1968), pp. 419-422.
+- Thompson, Ken. Regular Expression Search Algorithm, Communications of the ACM 11(6) (June 1968), pp. 419-422
