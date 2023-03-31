@@ -151,7 +151,7 @@ regexp
 
 - `bin/`: executables
 - `src/`: source files
-- `test/`: test files under `src/`.
+- `test/`: test files
 - `lib/`: object files
 - `log/`: output message of Valgrind
 > **Note**
