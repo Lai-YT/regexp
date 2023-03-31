@@ -31,7 +31,7 @@ _regexp_ is a side project I wrote when learning _Compilers_. It's a command lin
 To try out _regexp_, clone (or download) this repo and compile the source locally.
 
 ### Prerequisites
-We use [GNU Make](https://www.gnu.org/software/make/) to control the generation of executable and [gcc](https://gcc.gnu.org/) as the C compiler.
+_regexp_ uses [GNU Make](https://www.gnu.org/software/make/) to control the generation of executable and [gcc](https://gcc.gnu.org/) as the C compiler.
 
 ### Installing
 ```shell
