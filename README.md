@@ -166,6 +166,6 @@ $ make fmt
 ```
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
-- http://swtch.com/~rsc/regexp/
+- Cox, Russ. "Regular Expression Matching Can Be Simple And Fast," https://swtch.com/~rsc/regexp/regexp1.html, 2007
 - Aho, Alfred V., Sethi, Ravi, Ullman, Jeffrey D. "Compilers: Principles, Techniques, and Tools," 2nd ed., Addison-Wesley, 2006, pp. 147-166
-- Thompson, Ken. Regular Expression Search Algorithm, Communications of the ACM 11(6) (June 1968), pp. 419-422
+- Thompson, Ken. "Regular Expression Search Algorithm," Communications of the ACM 11(6), 1968, pp. 419-422
