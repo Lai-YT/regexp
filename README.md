@@ -99,7 +99,7 @@ Match mode:
 
 Written by: Lai-YT
 
-regexp version: 0.0.1
+regexp version: 0.1.0
 ```
 
 ### Example
