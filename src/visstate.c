@@ -20,6 +20,8 @@ static State* pop(List** stack) {
   return top;
 }
 
+/// @details The label of an epsilon transition is "eps", others are the
+/// characters they take.
 static void state2dot(State* state, FILE* f) {
   for (size_t i = 0; i < num_of_outs(state->label); i++) {
     fprintf(f, "\t%d -> %d", state->id, state->outs[i]->id);
@@ -51,6 +53,9 @@ static void states2dot(State* start, FILE* f) {
   }
 }
 
+/// @details A strict digraph that goes from left to right. The accepting state
+/// is represented as a double circle, others are circles. Every states have the
+/// same node size.
 void nfa2dot(const Nfa* nfa, FILE* f) {
   fputs("strict digraph nfa {\n", f);
   fputs("\trankdir=LR;\n", f);
