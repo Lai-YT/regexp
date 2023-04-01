@@ -57,20 +57,20 @@ void description() {
 }
 
 void graph_mode() {
-  fprintf(stdout, WHITE
-          "Graph mode:\n"
-          "  Converts the regular expression into a graph,\n"
-          "  exits with 1 if regexp is ill-formed or the file can't be opened\n"
-          "\n"
-          "  -d, --graph             Converts the NFA of the regexp into a "
-          "Graphviz\n"
-          "                        dot file (default: False)\n"
-          "  -o FILE, --output FILE\n"
-          "                        The name of the dot file.\n"
-          "                        A .dot extension is appended automatically\n"
-          "                        (default: nfa)\n"
-          "  regexp                The regular expression to be converted\n"
-          "\n" NO_COLOR);
+  fprintf(
+      stdout, WHITE
+      "Graph mode:\n"
+      "  Converts the regular expression into a graph,\n"
+      "  exits with 1 if regexp is ill-formed or the file can't be opened\n"
+      "\n"
+      "  -d, --graph           Converts the NFA of the regexp into a Graphviz\n"
+      "                        dot file (default: False)\n"
+      "  -o FILE, --output FILE\n"
+      "                        The name of the dot file.\n"
+      "                        A .dot extension is appended automatically\n"
+      "                        (default: nfa)\n"
+      "  regexp                The regular expression to be converted\n"
+      "\n" NO_COLOR);
 }
 
 void match_mode() {
