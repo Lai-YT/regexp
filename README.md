@@ -56,6 +56,15 @@ $ make tests
 $ make valgrind
 ```
 
+- Run the command line tests
+```shell
+# Give permission on execution
+$ chmod +x cli_test.sh
+
+# Run CLI tests
+$ ./cli_test.sh
+```
+
 ## 🎈 Usage <a name="usage"></a>
 Get the help message,
 ```shell
