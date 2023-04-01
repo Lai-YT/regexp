@@ -168,6 +168,6 @@ $ make fmt
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
 I would like to express my gratitude to Russ Cox for his inspiring work, which motivated me to embark on this project. His webpage on regular expression matching has been a valuable reference, demonstrating that simplicity can indeed be fast. \
-I would also like to thank Alfred Aho for his excellent book on compilers, which has guided me through the implementation of the algorithms used in this project. Without his clear and insightful explanations, this project would not have been possible.
+I would also like to thank Alfred Aho at el. for their excellent book on compilers, which has guided me through the implementation of the algorithms used in this project. Without their clear and insightful explanations, this project would not have been possible.
 - Cox, Russ. "Regular Expression Matching Can Be Simple And Fast," https://swtch.com/~rsc/regexp/regexp1.html, 2007
 - Aho, Alfred V., Sethi, Ravi, Ullman, Jeffrey D. "Compilers: Principles, Techniques, and Tools," 2nd ed., Addison-Wesley, 2006, pp. 147-166
