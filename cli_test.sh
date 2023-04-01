@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 
+#
+# Exit 0 if all tests passed, otherwise 1.
+# If you get any code other them these two, an unexpected error may have occured.
+#
+
 NO_COLOR='\033[0m'
 
 echo_in_green() {
@@ -17,118 +22,131 @@ echo_in_yellow() {
     echo "${YELLOW}$*${NO_COLOR}"
 }
 
+TITILE_BANNER="[==========]"
+RUN_BANNER="[ RUN      ]"
+BODY_BANNER="[          ]"
+OK_BANNER="[       OK ]"
+FAILED_BANNER="[  FAILED  ]"
+SECTION_BANNER="[----------]"
+
+#
+# To add a new test, extend the following test case list
+#
 EXEC=bin/regexp
-echo_in_yellow "[==========] Running CLI tests..."
+echo_in_yellow "${TITILE_BANNER} Running CLI tests..."
 pass_count=0
 fail_count=0
 if make clean >/dev/null 2>&1 && make >/dev/null 2>&1; then
-    echo_in_yellow "[ RUN      ] Normal matched"
+    echo_in_yellow "${RUN_BANNER} Normal matched"
     args="(a|b)*abb ababb"
-    echo "[          ] ${EXEC} ${args}"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
     if ! echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
-        echo_in_red "[  FAILED  ] should exit 0"
+        echo_in_red "${FAILED_BANNER} should exit 0"
         fail_count=$((fail_count + 1))
     else
-        echo_in_green "[       OK ]"
+        echo_in_green "${OK_BANNER}"
         pass_count=$((pass_count + 1))
     fi
 
-    echo_in_yellow "[ RUN      ] Normal unmatched"
+    echo_in_yellow "${RUN_BANNER} Normal unmatched"
     args="(a|b)*abb abab"
-    echo "[          ] ${EXEC} ${args}"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
     if echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
-        echo_in_red "[  FAILED  ] should exit 1"
+        echo_in_red "${FAILED_BANNER} should exit 1"
         fail_count=$((fail_count + 1))
     else
-        echo_in_green "[       OK ]"
+        echo_in_green "${OK_BANNER}"
         pass_count=$((pass_count + 1))
     fi
 
-    echo_in_yellow "[ RUN      ] Ill-formed regex"
+    echo_in_yellow "${RUN_BANNER} Ill-formed regex"
     args="(a|b*abb ababb"
-    echo "[          ] ${EXEC} ${args}"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
     if echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
-        echo_in_red "[  FAILED  ] should exit 1"
+        echo_in_red "${FAILED_BANNER} should exit 1"
         fail_count=$((fail_count + 1))
     else
-        echo_in_green "[       OK ]"
+        echo_in_green "${OK_BANNER}"
         pass_count=$((pass_count + 1))
     fi
 
-    echo_in_yellow "[ RUN      ] Missing string"
+    echo_in_yellow "${RUN_BANNER} Missing string"
     args="(a|b)*abb"
-    echo "[          ] ${EXEC} ${args}"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
     if echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
-        echo_in_red "[  FAILED  ] should exit 1"
+        echo_in_red "${FAILED_BANNER} should exit 1"
         fail_count=$((fail_count + 1))
     else
-        echo_in_green "[       OK ]"
+        echo_in_green "${OK_BANNER}"
         pass_count=$((pass_count + 1))
     fi
 
-    echo_in_yellow "[ RUN      ] Unknown argument"
+    echo_in_yellow "${RUN_BANNER} Unknown argument"
     args="(a|b)*abb ababb unknown"
-    echo "[          ] ${EXEC} ${args}"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
     if echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
-        echo_in_red "[  FAILED  ] should exit 1"
+        echo_in_red "${FAILED_BANNER} should exit 1"
         fail_count=$((fail_count + 1))
     else
-        echo_in_green "[       OK ]"
+        echo_in_green "${OK_BANNER}"
         pass_count=$((pass_count + 1))
     fi
 
     DOT_EXT="dot"
-    echo_in_yellow "[ RUN      ] Graph NFA to default file"
+    echo_in_yellow "${RUN_BANNER} Graph NFA to default file"
     DEFAULT="nfa"
-    echo "[          ] set-up: Removing ${DEFAULT}.${DOT_EXT}..."
+    echo "${BODY_BANNER} set-up: Removing ${DEFAULT}.${DOT_EXT}..."
     rm -f "${DEFAULT}.${DOT_EXT}"
     args="-g (a|b)*abb"
-    echo "[          ] ${EXEC} ${args}"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
     if ! echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
-        echo_in_red "[  FAILED  ] should exit 0"
+        echo_in_red "${FAILED_BANNER} should exit 0"
         fail_count=$((fail_count + 1))
     elif [ ! -f "${DEFAULT}.${DOT_EXT}" ]; then
-        echo_in_red "[  FAILED  ] output file ${DEFAULT}.${DOT_EXT} not found"
+        echo_in_red "${FAILED_BANNER} output file ${DEFAULT}.${DOT_EXT} not found"
         fail_count=$((fail_count + 1))
     else
-        echo_in_green "[       OK ]"
+        echo_in_green "${OK_BANNER}"
         pass_count=$((pass_count + 1))
     fi
-    echo "[          ] tear-down: Removing ${DEFAULT}.${DOT_EXT}..."
+    echo "${BODY_BANNER} tear-down: Removing ${DEFAULT}.${DOT_EXT}..."
     rm -f "${DEFAULT}.${DOT_EXT}"
 
-    echo_in_yellow "[ RUN      ] Graph NFA to designated file"
+    echo_in_yellow "${RUN_BANNER} Graph NFA to designated file"
     DESIGNSTED="cli_test_nfa"
-    echo "[          ] set-up: Removing ${DESIGNSTED}.${DOT_EXT}..."
+    echo "${BODY_BANNER} set-up: Removing ${DESIGNSTED}.${DOT_EXT}..."
     rm -f "${DESIGNSTED}.${DOT_EXT}"
     args="-g (a|b)*abb -o ${DESIGNSTED}"
-    echo "[          ] ${EXEC} ${args}"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
     if ! echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
-        echo_in_red "[  FAILED  ] should exit 0"
+        echo_in_red "${FAILED_BANNER} should exit 0"
         fail_count=$((fail_count + 1))
     elif [ ! -f "${DESIGNSTED}.${DOT_EXT}" ]; then
-        echo_in_red "[  FAILED  ] output file ${DESIGNSTED}.${DOT_EXT} not found"
+        echo_in_red "${FAILED_BANNER} output file ${DESIGNSTED}.${DOT_EXT} not found"
         fail_count=$((fail_count + 1))
     else
-        echo_in_green "[       OK ]"
+        echo_in_green "${OK_BANNER}"
         pass_count=$((pass_count + 1))
     fi
-    echo "[          ] tear-down: Removing ${DESIGNSTED}.${DOT_EXT}..."
+    echo "${BODY_BANNER} tear-down: Removing ${DESIGNSTED}.${DOT_EXT}..."
     rm -f "${DESIGNSTED}.${DOT_EXT}"
 
-    echo_in_yellow "[----------] $((pass_count + fail_count)) tests ran."
+    echo_in_yellow "${SECTION_BANNER} $((pass_count + fail_count)) tests ran."
 else
-    echo_in_red "[  FAILED  ] Compilation error"
+    echo_in_red "${FAILED_BANNER} Compilation error"
     exit 1
 fi
 
+TITILE_BANNER="[==========]"
+FAILED_BANNER="[  FAILED  ]"
+PASSED_BANNER="[  PASSED  ]"
 echo ""
-echo_in_yellow "[==========] Summary"
+echo_in_yellow "${TITILE_BANNER} Summary"
 if [ $pass_count -ne 0 ]; then
-    echo_in_green "[  PASSED  ] ${pass_count} tests."
+    echo_in_green "${PASSED_BANNER} ${pass_count} tests."
 fi
 if [ $fail_count -ne 0 ]; then
-    echo_in_red "[  FAILED  ] ${fail_count} tests."
+    echo_in_red "${FAILED_BANNER} ${fail_count} tests."
     exit 1
 fi
 exit 0
