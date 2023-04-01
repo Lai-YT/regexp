@@ -65,21 +65,37 @@ $ bin/regexp -h # or --help
 ```
 regexp
 
-Usage: regexp [options] [regexp string]
+Usage: regexp [-h] [-V] [-d regexp [-o FILE]] [regexp string]
 
 Description: Regular expression implementation.
 Supports only ( | ) * + ?. No escapes.
 Compiles to NFA and then simulates NFA using Thompson's algorithm.
 
-Matches the string (string) to the regular expression (regexp) and exits with 1 if it does not match.
+One can either graph the regexp or match a string.
+See the following options.
 
 Options:
+  -h, --help            Shows this help message and exit
+  -V, --version         Shows regexp version and exit
 
-        -v, --version
-                Prints regexp version
+Graph mode:
+  Converts the regular expression into a graph,
+  exits with 1 if regexp is ill-formed or the file can't be opened
 
-        -h, --help
-                Prints this help message
+  -d, --graph           Converts the NFA of the regexp into a Graphviz
+                        dot file (default: False)
+  -o FILE, --output FILE
+                        The name of the dot file.
+                        A .dot extension is appended automatically
+                        (default: nfa)
+  regexp                The regular expression to be converted
+
+Match mode:
+  Matches the string with the regular expression,
+  exits with 1 if regexp is ill-formed or it does not match
+
+  regexp                The regular expression to use on matching
+  string                The string to be matched
 
 Written by: Lai-YT
 
@@ -87,6 +103,9 @@ regexp version: 0.0.1
 ```
 
 ### Example
+
+#### Match mode
+This is the default mode. \
 _regexp_ takes two arguments: a regular expression and a string to match.
 ```shell
 $ bin/regexp '(a|b)*abb' 'bababb'
@@ -97,6 +116,32 @@ You can check the exit code with the following command if you're on an Unix shel
 ```shell
 $ echo $?
 ```
+
+#### Graph mode
+_regexp_ uses [Graphviz](https://graphviz.org/) to graph the NFA of a regular expression. It represents the NFA with the [DOT language](https://graphviz.org/doc/info/lang.html).
+
+By setting the `--graph` (or `-g`) option, you can use the graph mode. This takes a single regular expression as an argument.
+
+- Convert the NFA of a regular expression into a DOT file,
+```shell
+$ bin/regexp --graph '(a|b)*abb'
+```
+By default, the DOT file is written into `nfa.dot`.
+
+- You can also specify the output file with the `--output` (or `-o`) option, which takes a file as an argument.
+```shell
+$ bin/regexp --graph '(a|b)*abb' --output 'some/path/and/filename'
+```
+This will then write the graph into `some/path/and/filename.dot`.
+> **Note**
+> A `.dot` extension is always append to the you given.
+
+- After the DOT file is generated, you can convert it into a PNG image with Graphviz.
+```shell
+dot -Tpng nfa.dot -O
+```
+The PNG image will be located at `nfa.dot.png`.
+See the [command line documentation of Graphviz](https://graphviz.org/doc/info/command.html) to learn more.
 
 ## 🚀 Development <a name = "development"></a>
 There are several *make targets* to use.
