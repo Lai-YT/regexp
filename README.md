@@ -147,9 +147,12 @@ This will then write the graph into `some/path/and/filename.dot`.
 
 - After the DOT file is generated, you can convert it into a PNG image with Graphviz.
 ```shell
-dot -Tpng nfa.dot -O
+dot -Tpng nfa.dot -o nfa.png
 ```
-The PNG image will be located at `nfa.dot.png`.
+![The NFA of "(a|b)*abb"](https://imgur.com/WCbGHDu.png)
+> **Note**
+> The numbering of the states is related to the order of their creations.
+
 See the [command line documentation of Graphviz](https://graphviz.org/doc/info/command.html) to learn more.
 
 ## 🚀 Development <a name = "development"></a>
