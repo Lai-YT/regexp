@@ -1,24 +1,9 @@
 #include <limits.h>
 #include <stdio.h>
 
-#include "list.h"
 #include "map.h"
 #include "post2nfa.h"
-
-static void push(List** stack, State* s) {
-  List* tmp = create_list((s));
-  append_list(tmp, *stack);
-  *stack = tmp;
-}
-
-static State* pop(List** stack) {
-  State* top = (*stack)->val;
-  List* top_list = *stack;
-  *stack = (*stack)->next;
-  top_list->next = NULL;
-  delete_list(top_list);
-  return top;
-}
+#include "stack.h"
 
 /// @details The label of an epsilon transition is "eps", others are the
 /// characters they take.
@@ -37,10 +22,10 @@ static void state2dot(State* state, FILE* f) {
 
 static void states2dot(State* start, FILE* f) {
   Map* converted = create_map();
-  List* to_convert = NULL;
-  push(&to_convert, start);
-  while (to_convert) {  // depth-first traversal
-    State* s = pop(&to_convert);
+  Stack* to_convert = create_stack();
+  push_stack(to_convert, start);
+  while (!is_empty_stack(to_convert)) {  // depth-first traversal
+    State* s = pop_stack(to_convert);
     if (get_value(converted, s->id) /* is converted */
         || s->label == ACCEPT /* has no transition */) {
       continue;
@@ -48,9 +33,10 @@ static void states2dot(State* start, FILE* f) {
     state2dot(s, f);
     insert_pair(converted, s->id, s);  // mark as converted
     for (size_t i = 0; i < num_of_outs(s->label); i++) {
-      push(&to_convert, s->outs[i]);
+      push_stack(to_convert, s->outs[i]);
     }
   }
+  delete_stack(to_convert);
 }
 
 /// @details A strict digraph that goes from left to right. The accepting state

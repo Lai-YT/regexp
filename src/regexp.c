@@ -3,10 +3,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "list.h"
 #include "map.h"
 #include "post2nfa.h"
 #include "re2post.h"
+#include "stack.h"
 
 /// @details Simulates the NFA by moving between the possible set of states.
 /// If the accepting state is in the set after the last input character is
@@ -33,50 +33,33 @@ bool is_accepted(const Nfa* nfa, const char* s) {
   return accepted;
 }
 
-static void push(List** stack, State* s);
-static State* pop(List** stack);
-
 Map* epsilon_closure(Map* start) {
-  List* stack = NULL;
+  Stack* to_reach_out = create_stack();
 
   Map* closure = create_map();
-  // Inserts all of the start states into the closure and the stack.
+  // Inserts all of the start states into the closure and mark as to reach out.
   {  // limit the scope of itr
     MapIterator* itr = create_map_iterator(start);
     while (has_next(itr)) {
       to_next(itr);
-      push(&stack, get_current_value(itr));
+      push_stack(to_reach_out, get_current_value(itr));
       insert_pair(closure, get_current_key(itr), get_current_value(itr));
     }
     delete_map_iterator(itr);
   }
 
-  while (stack) {
-    State* top = pop(&stack);
+  while (!is_empty_stack(to_reach_out)) {
+    State* top = pop_stack(to_reach_out);
     for (size_t i = 0; i < num_of_epsilon_outs(top->label); i++) {
       State* out = top->outs[i];
       if (!get_value(closure, out->id)) {
         insert_pair(closure, out->id, out);
-        push(&stack, out);
+        push_stack(to_reach_out, out);
       }
     }
   }
+  delete_stack(to_reach_out);
   return closure;
-}
-
-static void push(List** stack, State* s) {
-  List* tmp = create_list((s));
-  append_list(tmp, *stack);
-  *stack = tmp;
-}
-
-static State* pop(List** stack) {
-  State* top = (*stack)->val;
-  List* top_list = *stack;
-  *stack = (*stack)->next;
-  top_list->next = NULL;
-  delete_list(top_list);
-  return top;
 }
 
 Map* move(Map* from, char c) {

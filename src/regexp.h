@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 
-#include "list.h"
 #include "map.h"
 #include "post2nfa.h"
 
