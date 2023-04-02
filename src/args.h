@@ -25,6 +25,8 @@
 struct options {
   bool help;
   bool version;
+  bool graph;
+  char filename[BUF_SIZE];
   char regexp[BUF_SIZE];
   char string[BUF_SIZE];
 };

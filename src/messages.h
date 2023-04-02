@@ -18,7 +18,7 @@
 #define MESSAGES_H
 
 #define __PROGRAM_NAME__ "regexp"
-#define __PROGRAM_VERSION__ "0.0.1"
+#define __PROGRAM_VERSION__ "0.1.0"
 #define __PROGRAM_AUTHOR__ "Lai-YT"
 
 void help();

@@ -31,6 +31,8 @@
 static void set_default_options(options_t* options) {
   options->help = false;
   options->version = false;
+  options->graph = false;
+  strncpy(options->filename, "nfa", BUF_SIZE);
 }
 
 /*
@@ -43,10 +45,24 @@ void switch_options(int arg, options_t* options) {
       help();
       exit(EXIT_SUCCESS);
 
-    case 'v':
+    case 'V':
       options->version = true;
       version();
       exit(EXIT_SUCCESS);
+
+    case 'g':
+      options->graph = true;
+      break;
+
+    case 'o':
+      if (!options->graph) {
+        fprintf(stderr,
+                "option --output has to be used together with --graph\n");
+        usage();
+        exit(EXIT_FAILURE);
+      }
+      strncpy(options->filename, optarg, BUF_SIZE);
+      break;
 
     case '?':
       usage();
@@ -87,13 +103,15 @@ void options_parser(int argc, char* argv[], options_t* options) {
   /* getopt allowed options */
   static struct option long_options[] = {
       {"help", no_argument, 0, 'h'},
-      {"version", no_argument, 0, 'v'},
+      {"version", no_argument, 0, 'V'},
+      {"graph", no_argument, 0, 'g'},
+      {"output", required_argument, 0, 'o'},
       {0, 0, 0, 0},
   };
 
   while (true) {
     int option_index = 0;
-    arg = getopt_long(argc, argv, "hv", long_options, &option_index);
+    arg = getopt_long(argc, argv, "hVgo:", long_options, &option_index);
 
     /* End of the options? */
     if (arg == -1) {
@@ -103,7 +121,15 @@ void options_parser(int argc, char* argv[], options_t* options) {
     switch_options(arg, options);
   }
 
-  /* Gets the regular expression and string or exits with error */
+  /* Both graph and match mode take a regexp */
   get_regexp(argc, argv, options);
-  get_string(argc, argv, options);
+
+  if (!options->graph) {
+    get_string(argc, argv, options);
+  }
+  if (optind < argc) {
+    fprintf(stderr, "%s: unknown arguments\n", argv[0]);
+    usage();
+    exit(EXIT_FAILURE);
+  }
 }
