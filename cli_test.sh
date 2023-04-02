@@ -37,6 +37,7 @@ echo_in_yellow "${TITILE_BANNER} Running CLI tests..."
 pass_count=0
 fail_count=0
 if make clean >/dev/null 2>&1 && make >/dev/null 2>&1; then
+    # begin test cases
     echo_in_yellow "${RUN_BANNER} Normal matched"
     args="(a|b)*abb ababb"
     echo "${BODY_BANNER} ${EXEC} ${args}"
@@ -131,6 +132,28 @@ if make clean >/dev/null 2>&1 && make >/dev/null 2>&1; then
     echo "${BODY_BANNER} tear-down: Removing ${DESIGNSTED}.${DOT_EXT}..."
     rm -f "${DESIGNSTED}.${DOT_EXT}"
 
+    echo_in_yellow "${RUN_BANNER} Output specified without using graph mode"
+    args="(a|b)*abb ababb -o file"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
+    if echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
+        echo_in_red "${FAILED_BANNER} should exit 1"
+        fail_count=$((fail_count + 1))
+    else
+        echo_in_green "${OK_BANNER}"
+        pass_count=$((pass_count + 1))
+    fi
+
+    echo_in_yellow "${RUN_BANNER} Output option set without file specified"
+    args="(a|b)*abb ababb -o"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
+    if echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
+        echo_in_red "${FAILED_BANNER} should exit 1"
+        fail_count=$((fail_count + 1))
+    else
+        echo_in_green "${OK_BANNER}"
+        pass_count=$((pass_count + 1))
+    fi
+    # tail of test cases
     echo_in_yellow "${SECTION_BANNER} $((pass_count + fail_count)) tests ran."
 else
     echo_in_red "${FAILED_BANNER} Compilation error"
