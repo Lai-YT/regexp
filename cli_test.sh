@@ -1,9 +1,35 @@
 #!/usr/bin/env sh
 
-#
-# Exit 0 if all tests passed, otherwise 1.
-# If you get any code other them these two, an unexpected error may have occured.
-#
+usage() {
+    echo "usage: ${0} build"
+    echo ""
+    echo "  Exit 0 if all tests passed, otherwise 1."
+    echo "  If you get any code other them these two,"
+    echo "  an unexpected error may have occured."
+    echo ""
+    echo "build:"
+    echo "  Specify one of the builds to test on."
+    echo ""
+    echo "  -d, --debug"
+    echo "  -r, --release"
+}
+
+if [ "$#" -ne 1 ]; then
+    usage
+    exit 1
+fi
+
+case "$1" in
+    -d|--debug)
+        BUILD_MODE='debug'
+        ;;
+    -r|--release)
+        BUILD_MODE='release'
+        ;;
+    *)
+        usage
+        exit 1
+esac
 
 NO_COLOR='\033[0m'
 
@@ -33,10 +59,10 @@ SECTION_BANNER="[----------]"
 # To add a new test, extend the following test case list
 #
 EXEC=bin/regexp
-echo_in_yellow "${TITILE_BANNER} Running CLI tests..."
+echo_in_yellow "${TITILE_BANNER} Running CLI tests on ${BUILD_MODE} build..."
 pass_count=0
 fail_count=0
-if make clean >/dev/null 2>&1 && make >/dev/null 2>&1; then
+if make clean >/dev/null 2>&1 && make ${BUILD_MODE} >/dev/null 2>&1; then
     # begin test cases
     echo_in_yellow "${RUN_BANNER} Normal matched"
     args="(a|b)*abb ababb"
