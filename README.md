@@ -38,8 +38,8 @@ _regexp_ uses [GNU Make](https://www.gnu.org/software/make/) to control the gene
 # Get the repo
 $ git clone https://github.com/Lai-YT/regexp.git
 
-# Compile to executable
-$ make
+# Compile to executable with optimizations
+$ make release
 ```
 
 The executable will be located in the `bin/` folder and named `regexp`.
@@ -55,14 +55,13 @@ $ make tests
 ```shell
 $ make valgrind
 ```
-
 - Run the command line tests
 ```shell
 # Give permission on execution
 $ chmod +x cli_test.sh
 
-# Run CLI tests
-$ ./cli_test.sh
+# Run CLI tests on release (or debug) build
+$ ./cli_test.sh --release # --debug
 ```
 
 ## 🎈 Usage <a name="usage"></a>
@@ -156,14 +155,21 @@ dot -Tpng nfa.dot -o nfa.png
 See the [command line documentation of Graphviz](https://graphviz.org/doc/info/command.html) to learn more.
 
 ## 🚀 Development <a name = "development"></a>
-There are several *make targets* to use.
+Run _regex_ with debug messages and less optimizations (`-O0`).
+```shell
+make debug
+```
+
+There are several other *make targets* to use.
 ```shell
 $ make help
 ```
 
 ```
 Target rules:
-    all      - Compiles and generates binary file
+    debug    - Compiles and generates binary file with
+               debug messages and less optimizations
+    release  - Compiles and generates optimized binary file
     tests    - Compiles with cmocka and runs test binary file
     valgrind - Runs test binary file using valgrind tool
     fmt      - Formats the source and test files

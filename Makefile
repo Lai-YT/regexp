@@ -72,10 +72,11 @@ STACK := -fstack-protector-all -Wstack-protector
 WARNS := -Wall -Wextra -pedantic # -pedantic warns on language standards
 
 # Flags for compiling
-CFLAGS := -O3 $(STD) $(STACK) $(WARNS)
+CFLAGS := $(STD) $(STACK) $(WARNS)
 
-# Debug options
-DEBUG := -g3 -DDEBUG=1
+# Flags differ between debug and release build
+DEBUG := -O0 -g3 -DDEBUG=1
+RELEASE := -O3
 
 # Dependency libraries
 LIBS := -lm
@@ -97,14 +98,16 @@ OBJECTS := $(patsubst %,$(LIBDIR)/%.o,$(NAMES))
 # COMPILATION RULES
 #
 
-default: all
+default: debug
 
 # Help message
 help:
 	@echo -e "$(BLUE)$(PROJECT_NAME)$(END_COLOR)"
 	@echo
 	@echo "Target rules:"
-	@echo "    all      - Compiles and generates binary file"
+	@echo "    debug    - Compiles and generates binary file with"
+	@echo "               debug messages and less optimizations"
+	@echo "    release  - Compiles and generates optimized binary file"
 	@echo "    tests    - Compiles with cmocka and runs test binary file"
 	@echo "    valgrind - Runs test binary file using valgrind tool"
 	@echo "    fmt      - Formats the source and test files"
@@ -112,9 +115,12 @@ help:
 	@echo "    help     - Prints a help message with target rules"
 
 # Rule for link and generate the binary file
-all: $(OBJECTS)
+debug: CFLAGS += $(DEBUG)
+release: CFLAGS += $(RELEASE)
+debug release: $(OBJECTS)
 	@echo -en "$(YELLOW)LD $(END_COLOR)";
-	$(CC) -o $(BINDIR)/$(BINARY) $+ $(DEBUG) $(CFLAGS) $(LIBS)
+	$(CC) -o $(BINDIR)/$(BINARY) $+ $(CFLAGS) $(LIBS)
+	@echo -e "$(YELLOW)End $@ build.$(END_COLOR)"
 	@echo -en "\n--\nBinary file placed at" \
 			  "$(YELLOW)$(BINDIR)/$(BINARY)$(END_COLOR)\n";
 
@@ -122,7 +128,7 @@ all: $(OBJECTS)
 # Rule for object binaries compilation
 $(LIBDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@echo -en "$(YELLOW)CC $(END_COLOR)";
-	$(CC) -c $^ -o $@ $(DEBUG) $(CFLAGS) $(LIBS)
+	$(CC) -c $^ -o $@ $(CFLAGS) $(LIBS)
 
 
 # Rule for run valgrind tool
@@ -144,7 +150,7 @@ fmt:
 
 
 # Compile tests and run the test binary
-tests: all
+tests: debug
 	@echo -en "$(YELLOW)CC $(END_COLOR)";
 	$(CC) $(TESTDIR)/main.c -o $(BINDIR)/$(TEST_BINARY) $(shell find $(LIBDIR) -name *.o ! -name main.o) $(DEBUG) $(CFLAGS) $(LIBS) $(TEST_LIBS)
 	@which ldconfig && ldconfig -C /tmp/ld.so.cache || true # caching the library linking
