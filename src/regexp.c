@@ -8,6 +8,49 @@
 #include "re2post.h"
 #include "stack.h"
 
+static int state_id = 0;
+
+typedef struct DfaState {
+  int id;
+  Map* states;
+  int next[256];
+} DfaState;
+
+DfaState* create_dfa_state(Map* states) {
+  DfaState* state = malloc(sizeof(DfaState));
+  state->id = state_id++;
+  state->states = states;
+  for (int i = 0; i < 256; i++) {
+    state->next[i] = -1;
+  }
+  return state;
+}
+
+void delete_dfa_state(DfaState* root) {
+  delete_map(root->states);
+  free(root);
+}
+
+/// @details Worst case time complexity O(n^2 * m).
+/// m is the capacity of the map, which is the cost of iterating over a map; n
+/// is the size of the map, each search has worst case O(n). Another n for
+/// checking every key.
+bool map_cmp(Map* m1, Map* m2) {
+  if (get_size(m1) != get_size(m2)) {
+    return false;
+  }
+  MapIterator* itr = create_map_iterator(m1);
+  while (has_next(itr)) {
+    to_next(itr);
+    if (!get_value(m2, get_current_key(itr))) {
+      delete_map_iterator(itr);
+      return false;
+    }
+  }
+  delete_map_iterator(itr);
+  return true;
+}
+
 /// @details Simulates the NFA by moving between the possible set of states.
 /// If the accepting state is in the set after the last input character is
 /// consumed, the NFA accepts the string.
@@ -15,11 +58,35 @@ bool is_accepted(const Nfa* nfa, const char* s) {
   Map* start = create_map();
   insert_pair(start, nfa->start->id, nfa->start);
   Map* states = epsilon_closure(start);
+  delete_map(start);
+  Map* dstates = create_map();
+  DfaState* dstate = create_dfa_state(states);
+  insert_pair(dstates, dstate->id, dstate);
   for (; *s; s++) {
-    Map* moves = move(states, *s);
-    delete_map(states);
-    states = epsilon_closure(moves);
-    delete_map(moves);
+    if (dstate->next[(int)*s] == -1) {
+      bool has_cache = false;
+      Map* moves = move(dstate->states, *s);
+      states = epsilon_closure(moves);
+      delete_map(moves);
+      MapIterator* itr = create_map_iterator(dstates);
+      while (has_next(itr)) {
+        to_next(itr);
+        if (map_cmp(states, ((DfaState*)get_current_value(itr))->states)) {
+          dstate->next[(int)*s] = get_current_key(itr);
+          delete_map(states);
+          states = NULL;
+          has_cache = true;
+          break;
+        }
+      }
+      delete_map_iterator(itr);
+      if (!has_cache) {
+        DfaState* next_dstate = create_dfa_state(states);
+        insert_pair(dstates, next_dstate->id, next_dstate);
+        dstate->next[(int)*s] = next_dstate->id;
+      }
+    }
+    dstate = get_value(dstates, dstate->next[(int)*s]);
   }
 
   /// Thompson's algorithm proves that: For any regular language L, there is an
@@ -27,9 +94,14 @@ bool is_accepted(const Nfa* nfa, const char* s) {
   /// distinct from the starting state s.
   /// See
   /// https://courses.engr.illinois.edu/cs374/fa2018/notes/models/04-nfa.pdf.
-  const bool accepted = get_value(states, nfa->accept->id);
-  delete_map(states);
-  delete_map(start);
+  const bool accepted = get_value(dstate->states, nfa->accept->id);
+  MapIterator* itr = create_map_iterator(dstates);
+  while (has_next(itr)) {
+    to_next(itr);
+    delete_dfa_state(get_current_value(itr));
+  }
+  delete_map_iterator(itr);
+  delete_map(dstates);
   return accepted;
 }
 
