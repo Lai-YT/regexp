@@ -1,17 +1,10 @@
 /*
- * ============================================================================
- *
- *       Filename:  args.h
- *
- *    Description:  Header file of the command line options parser
- *
- *        Created:  24/03/2016 21:30:39 PM
- *       Compiler:  gcc
- *
- *         Author:  Gustavo Pantuza
- *   Organization:  Software Community
- *
- * ============================================================================
+Copyright (c) 2016 Gustavo Pantuza Coelho Pinto
+Copyright (c) 2023 Lai-YT
+
+Can be distributed under the MIT license.
+The full text of the license can be found in
+https://opensource.org/license/mit/.
  */
 
 #ifndef ARGS_H

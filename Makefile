@@ -1,14 +1,9 @@
+# Copyright (c) 2016 Gustavo Pantuza Coelho Pinto
+# Copyright (c) 2023 Lai-YT
 #
-#
-#
-# Makefile template for C code
-#
-# Author: Gustavo Pantuza Coelho Pinto
-# Since: 24.03.2016
-#
-#
-#
-
+# Can be distributed under the MIT license.
+# The full text of the license can be found in
+# https://opensource.org/license/mit/.
 
 # Includes the project configurations
 include project.conf

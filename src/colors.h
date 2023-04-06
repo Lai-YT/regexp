@@ -1,17 +1,10 @@
 /*
- * ============================================================================
- *
- *       Filename:  colors.h
- *
- *    Description:  This file define the output colors used by the program
- *
- *        Created:  24/03/2015 22:20:40 PM
- *       Compiler:  gcc
- *
- *         Author:  Gustavo Pantuza
- *   Organization:  Software Community
- *
- * ============================================================================
+Copyright (c) 2016 Gustavo Pantuza Coelho Pinto
+Copyright (c) 2023 Lai-YT
+
+Can be distributed under the MIT license.
+The full text of the license can be found in
+https://opensource.org/license/mit/.
  */
 
 #ifndef COLORS_H

@@ -1,17 +1,10 @@
 /*
- * ============================================================================
- *
- *       Filename:  messages.h
- *
- *    Description:  Header file of program messages
- *
- *        Created:  24/03/2015 22:30:42
- *       Compiler:  gcc
- *
- *         Author:  Gustavo Pantuza
- *   Organization:  Software Community
- *
- * ============================================================================
+Copyright (c) 2016 Gustavo Pantuza Coelho Pinto
+Copyright (c) 2023 Lai-YT
+
+Can be distributed under the MIT license.
+The full text of the license can be found in
+https://opensource.org/license/mit/.
  */
 
 #ifndef MESSAGES_H

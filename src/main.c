@@ -1,16 +1,10 @@
 /*
- * ============================================================================
- *
- *       Filename:  main.c
- *
- *    Description:  Main file of the project
- *
- *        Created:  03/24/2016 19:40:56
- *
- *         Author:  Gustavo Pantuza
- *   Organization:  Software Community
- *
- * ============================================================================
+Copyright (c) 2016 Gustavo Pantuza Coelho Pinto
+Copyright (c) 2023 Lai-YT
+
+Can be distributed under the MIT license.
+The full text of the license can be found in
+https://opensource.org/license/mit/.
  */
 
 #include <stdbool.h>

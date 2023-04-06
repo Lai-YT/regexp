@@ -1,3 +1,12 @@
+/*
+Copyright (c) 2007 Russ Cox
+Copyright (c) 2023 Lai-YT
+
+Can be distributed under the MIT license.
+The full text of the license can be found in
+https://opensource.org/license/mit/.
+ */
+
 #ifndef RE2POST_H
 #define RE2POST_H
 
