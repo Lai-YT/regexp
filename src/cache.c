@@ -10,7 +10,7 @@ DfaState* create_dfa_state(Map* states) {
   DfaState* state = malloc(sizeof(DfaState));
   state->id = state_id++;
   state->states = states;
-  for (int i = 0; i < 256; i++) {
+  for (int i = 0; i < 128; i++) {
     state->next[i] = -1;
   }
   return state;
