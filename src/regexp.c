@@ -3,33 +3,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "cache.h"
 #include "map.h"
 #include "post2nfa.h"
 #include "re2post.h"
 #include "stack.h"
-
-static int state_id = 0;
-
-typedef struct DfaState {
-  int id;
-  Map* states;
-  int next[256];
-} DfaState;
-
-DfaState* create_dfa_state(Map* states) {
-  DfaState* state = malloc(sizeof(DfaState));
-  state->id = state_id++;
-  state->states = states;
-  for (int i = 0; i < 256; i++) {
-    state->next[i] = -1;
-  }
-  return state;
-}
-
-void delete_dfa_state(DfaState* root) {
-  delete_map(root->states);
-  free(root);
-}
 
 /// @details Worst case time complexity O(n^2 * m).
 /// m is the capacity of the map, which is the cost of iterating over a map; n
