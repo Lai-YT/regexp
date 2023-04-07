@@ -36,12 +36,7 @@ bool is_accepted(const Nfa* nfa, const char* s) {
     const bool accepted = get_value(curr_dstate->states, nfa->accept->id);
 
     // traverse the cache table to delete all the DFA states
-    MapIterator* itr = create_map_iterator(cache_table);
-    while (has_next(itr)) {
-      to_next(itr);
-      delete_dfa_state(get_current_value(itr));
-    }
-    delete_map_iterator(itr);
+    FOR_EACH_ITR(cache_table, itr, delete_dfa_state(get_current_value(itr)));
     delete_map(cache_table);
 
     return accepted;
@@ -68,15 +63,10 @@ Map* epsilon_closure(Map* start) {
 
   Map* closure = create_map();
   // Inserts all of the start states into the closure and mark as to reach out.
-  {  // limit the scope of itr
-    MapIterator* itr = create_map_iterator(start);
-    while (has_next(itr)) {
-      to_next(itr);
-      push_stack(to_reach_out, get_current_value(itr));
-      insert_pair(closure, get_current_key(itr), get_current_value(itr));
-    }
-    delete_map_iterator(itr);
-  }
+  FOR_EACH_ITR(start, itr, {
+    push_stack(to_reach_out, get_current_value(itr));
+    insert_pair(closure, get_current_key(itr), get_current_value(itr));
+  });
 
   while (!is_empty_stack(to_reach_out)) {
     State* top = pop_stack(to_reach_out);
@@ -94,15 +84,12 @@ Map* epsilon_closure(Map* start) {
 
 Map* move(Map* from, char c) {
   Map* outs = create_map();
-  MapIterator* itr = create_map_iterator(from);
-  while (has_next(itr)) {
-    to_next(itr);
+  FOR_EACH_ITR(from, itr, {
     State* s = get_current_value(itr);
     if (s->label == c) {
       insert_pair(outs, s->outs[0]->id, s->outs[0]);
     }
-  }
-  delete_map_iterator(itr);
+  });
   return outs;
 }
 

@@ -52,4 +52,26 @@ bool has_next(MapIterator*);
 /// @exception Assertion error if there's no more to_next.
 void to_next(MapIterator*);
 
+/// @brief Iterates over the map with an iterator and executes the statement
+/// for each iteration.
+/// @param map The map to iterate over.
+/// @param itr_name The name of the iterator to be created by this macro, which
+/// can be used within the statement to refer to the current value or key.
+/// @param statement The statement to execute in every iteration.If there are
+/// multiple statements, they should be enclosed in curly brackets. The
+/// statement can use the `continue` and `break` keywords to control the
+/// iteration, and the `return` keyword to exit the function that calls this
+/// macro.
+/// @note This macro creates an iterator object internally and deletes it after
+/// the iteration is complete.
+#define FOR_EACH_ITR(map, itr_name, statement)        \
+  {                                                   \
+    MapIterator* itr_name = create_map_iterator(map); \
+    while (has_next(itr_name)) {                      \
+      to_next(itr_name);                              \
+      statement;                                      \
+    }                                                 \
+    delete_map_iterator(itr_name);                    \
+  }
+
 #endif /* end of include guard: MAP_H */
