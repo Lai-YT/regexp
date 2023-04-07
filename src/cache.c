@@ -11,12 +11,12 @@ DfaState* create_dfa_state(Map* states) {
   state->id = state_id++;
   state->states = states;
   for (int i = 0; i < 128; i++) {
-    state->next[i] = -1;
+    state->next[i] = NO_CACHE;
   }
   return state;
 }
 
-void delete_dfa_state(DfaState* root) {
-  delete_map(root->states);
-  free(root);
+void delete_dfa_state(DfaState* dstate) {
+  delete_map(dstate->states);
+  free(dstate);
 }

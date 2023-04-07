@@ -9,11 +9,74 @@
 #include "re2post.h"
 #include "stack.h"
 
+/// @return The states reachable from the current states on label c with epsilon
+/// moves.
+Map* get_next_states(Map* current_states, char c);
+
 /// @details Worst case time complexity O(n^2 * m).
 /// m is the capacity of the map, which is the cost of iterating over a map; n
 /// is the size of the map, each search has worst case O(n). Another n for
 /// checking every key.
-bool map_cmp(Map* m1, Map* m2) {
+bool map_equal(Map* m1, Map* m2);
+
+/// @brief Caching the ids of the DFA states.
+static Map* cache_table = NULL;
+
+/// @brief Stores the DFA state to the cache_table.
+void cache_dstate(DfaState* dstate);
+
+/// @note This function has side effect on modifing the next states of
+/// curr_dstate on label c, which happens if the next states has a
+/// corresponding DFA state on the cache table.
+bool has_cache(DfaState* curr_dstate, char c);
+
+/// @brief Stores the DFA state to the cache_table.
+void cache_dstate(DfaState* dstate) {
+  insert_pair(cache_table, dstate->id, dstate);
+}
+
+/// @note This function has side effect on modifing the next states of
+/// curr_dstate on character c, which happens if the next states has a
+/// corresponding DFA state on the cache table.
+bool has_cache(DfaState* curr_dstate, char c) {
+  if (curr_dstate->next[(int)c] != NO_CACHE) {
+    return true;
+  }
+  bool has_cache = false;
+  Map* next_states = get_next_states(curr_dstate->states, c);
+  MapIterator* itr = create_map_iterator(cache_table);
+  while (has_next(itr)) {
+    to_next(itr);
+    DfaState* dstate = get_current_value(itr);
+    if (map_equal(next_states, dstate->states)) {
+      curr_dstate->next[(int)c] = dstate->id;
+      has_cache = true;
+      break;
+    }
+  }
+  delete_map_iterator(itr);
+  delete_map(next_states);
+  return has_cache;
+}
+
+Map* get_next_states(Map* current_states, char c) {
+  Map* moves = move(current_states, c);
+  Map* next_states = epsilon_closure(moves);
+  delete_map(moves);
+  return next_states;
+}
+
+/// @return The epsilon closure from start.
+static Map* get_start_states(State* start) {
+  Map* start_states = create_map();
+  insert_pair(start_states, start->id, start);
+  Map* tmp = epsilon_closure(start_states);
+  delete_map(start_states);
+  start_states = tmp;
+  return start_states;
+}
+
+bool map_equal(Map* m1, Map* m2) {
   if (get_size(m1) != get_size(m2)) {
     return false;
   }
@@ -33,38 +96,17 @@ bool map_cmp(Map* m1, Map* m2) {
 /// If the accepting state is in the set after the last input character is
 /// consumed, the NFA accepts the string.
 bool is_accepted(const Nfa* nfa, const char* s) {
-  Map* start = create_map();
-  insert_pair(start, nfa->start->id, nfa->start);
-  Map* states = epsilon_closure(start);
-  delete_map(start);
-  Map* dstates = create_map();
-  DfaState* dstate = create_dfa_state(states);
-  insert_pair(dstates, dstate->id, dstate);
+  cache_table = create_map();
+  DfaState* curr_dstate = create_dfa_state(get_start_states(nfa->start));
+  cache_dstate(curr_dstate);
   for (; *s; s++) {
-    if (dstate->next[(int)*s] == -1) {
-      bool has_cache = false;
-      Map* moves = move(dstate->states, *s);
-      states = epsilon_closure(moves);
-      delete_map(moves);
-      MapIterator* itr = create_map_iterator(dstates);
-      while (has_next(itr)) {
-        to_next(itr);
-        if (map_cmp(states, ((DfaState*)get_current_value(itr))->states)) {
-          dstate->next[(int)*s] = get_current_key(itr);
-          delete_map(states);
-          states = NULL;
-          has_cache = true;
-          break;
-        }
-      }
-      delete_map_iterator(itr);
-      if (!has_cache) {
-        DfaState* next_dstate = create_dfa_state(states);
-        insert_pair(dstates, next_dstate->id, next_dstate);
-        dstate->next[(int)*s] = next_dstate->id;
-      }
+    if (!has_cache(curr_dstate, *s)) {
+      DfaState* next_dstate
+          = create_dfa_state(get_next_states(curr_dstate->states, *s));
+      cache_dstate(next_dstate);
+      curr_dstate->next[(int)*s] = next_dstate->id;
     }
-    dstate = get_value(dstates, dstate->next[(int)*s]);
+    curr_dstate = get_value(cache_table, curr_dstate->next[(int)*s]);
   }
 
   /// Thompson's algorithm proves that: For any regular language L, there is an
@@ -72,14 +114,17 @@ bool is_accepted(const Nfa* nfa, const char* s) {
   /// distinct from the starting state s.
   /// See
   /// https://courses.engr.illinois.edu/cs374/fa2018/notes/models/04-nfa.pdf.
-  const bool accepted = get_value(dstate->states, nfa->accept->id);
-  MapIterator* itr = create_map_iterator(dstates);
+  const bool accepted = get_value(curr_dstate->states, nfa->accept->id);
+
+  // traverse the cache table to delete all the DFA states
+  MapIterator* itr = create_map_iterator(cache_table);
   while (has_next(itr)) {
     to_next(itr);
     delete_dfa_state(get_current_value(itr));
   }
   delete_map_iterator(itr);
-  delete_map(dstates);
+  delete_map(cache_table);
+
   return accepted;
 }
 

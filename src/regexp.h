@@ -10,11 +10,11 @@
 /// @details Simulates the NFA.
 bool is_accepted(const Nfa*, const char*);
 
-/// @brief Returns the states that are reachable from start with only epsilon
+/// @return The states that are reachable from start with only epsilon
 /// transitions, including all of the start states itself.
 Map* epsilon_closure(Map* start);
 
-/// @brief Returns the states that are reachable from the map of states on label
+/// @return The states that are reachable from the map of states on label
 /// c with non-epsilon moves.
 Map* move(Map*, char c);
 
