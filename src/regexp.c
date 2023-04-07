@@ -12,42 +12,16 @@
 /// @return The epsilon closure from start.
 static Map* get_start_states(State* start);
 
-static bool cache_on_the_fly = true;
-
 /// @details Simulates the NFA by moving between the possible set of states.
 /// If the accepting state is in the set after the last input character is
 /// consumed, the NFA accepts the string.
 bool is_accepted(const Nfa* nfa, const char* s) {
-  if (cache_on_the_fly) {
-    /// @brief Caching the ids of the DFA states.
-    Map* cache_table = create_map();
-    DfaState* curr_dstate = create_dfa_state(get_start_states(nfa->start));
-    cache_dstate(cache_table, curr_dstate);
-    for (; *s; s++) {
-      if (!has_cache(cache_table, curr_dstate, *s)) {
-        DfaState* next_dstate
-            = create_dfa_state(get_next_states(curr_dstate->states, *s));
-        cache_dstate(cache_table, next_dstate);
-        curr_dstate->next[(int)*s] = next_dstate->id;
-      }
-      curr_dstate = get_value(cache_table, curr_dstate->next[(int)*s]);
-    }
-
-    const bool accepted = get_value(curr_dstate->states, nfa->accept->id);
-
-    // traverse the cache table to delete all the DFA states
-    FOR_EACH_ITR(cache_table, itr, delete_dfa_state(get_current_value(itr)));
-    delete_map(cache_table);
-
-    return accepted;
-  }
   Map* states = get_start_states(nfa->start);
   for (; *s; s++) {
     Map* next_states = get_next_states(states, *s);
     delete_map(states);
     states = next_states;
   }
-
   /// Thompson's algorithm proves that: For any regular language L, there is
   /// an NFA that accepts L that has exactly one accepting state t, which is
   /// distinct from the starting state s.
@@ -55,6 +29,30 @@ bool is_accepted(const Nfa* nfa, const char* s) {
   /// https://courses.engr.illinois.edu/cs374/fa2018/notes/models/04-nfa.pdf.
   const bool accepted = get_value(states, nfa->accept->id);
   delete_map(states);
+  return accepted;
+}
+
+bool is_accepted_with_cache(const Nfa* nfa, const char* s) {
+  /// Caching the ids of the DFA states.
+  Map* cache_table = create_map();
+  DfaState* curr_dstate = create_dfa_state(get_start_states(nfa->start));
+  cache_dstate(cache_table, curr_dstate);
+  for (; *s; s++) {
+    if (!has_cache(cache_table, curr_dstate, *s)) {
+      DfaState* next_dstate
+          = create_dfa_state(get_next_states(curr_dstate->states, *s));
+      cache_dstate(cache_table, next_dstate);
+      curr_dstate->next[(int)*s] = next_dstate->id;
+    }
+    curr_dstate = get_value(cache_table, curr_dstate->next[(int)*s]);
+  }
+
+  const bool accepted = get_value(curr_dstate->states, nfa->accept->id);
+
+  // delete all the DFA states
+  FOR_EACH_ITR(cache_table, itr, delete_dfa_state(get_current_value(itr)));
+  delete_map(cache_table);
+
   return accepted;
 }
 
