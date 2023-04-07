@@ -74,7 +74,7 @@ $ bin/regexp -h # or --help
 ```
 regexp
 
-Usage: regexp [-h] [-V] [-d regexp [-o FILE]] [regexp string]
+Usage: regexp [-h] [-V] [-d regexp [-o FILE]] [[-c] regexp string]
 
 Description: Regular expression implementation.
 Supports only ( | ) * + ?. No escapes.
@@ -103,12 +103,13 @@ Match mode:
   Matches the string with the regular expression,
   exits with 1 if regexp is ill-formed or it does not match
 
+  -c, --cache           Caches NFA states to build DFA on the fly
   regexp                The regular expression to use on matching
   string                The string to be matched
 
 Written by: Lai-YT
 
-regexp version: 0.1.0
+regexp version: 0.2.0
 ```
 
 ### Example
@@ -124,6 +125,15 @@ This exits with 0 if the string is matched by the regular expression or 1 if the
 You can check the exit code with the following command if you're on an Unix shell.
 ```shell
 $ echo $?
+```
+
+#### Caching the NFA to build a DFA on the fly
+"In a sense, Thompson's NFA simulation is executing the equivalent DFA by reconstructing each DFA state as it is needed. Rather than throw away this work after each step, we could cache them, avoiding the cost of repeating the computation in the future and essentially computing the equivalent DFA as it is needed." (Russ Cox, see [Acknowledgments](#acknowledgement))
+
+_regexp_ doesn't cache the states by default. \
+Set the `--cache` (or `-c`) option to enable the caching.
+```shell
+$ bin/regexp -c '(a|b)*abb' 'bababb'
 ```
 
 #### Graph mode
