@@ -75,8 +75,30 @@ if make clean >/dev/null 2>&1 && make ${BUILD_MODE} >/dev/null 2>&1; then
         pass_count=$((pass_count + 1))
     fi
 
+    echo_in_yellow "${RUN_BANNER} Normal matched (cache)"
+    args="-c (a|b)*abb ababb"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
+    if ! echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
+        echo_in_red "${FAILED_BANNER} should exit 0"
+        fail_count=$((fail_count + 1))
+    else
+        echo_in_green "${OK_BANNER}"
+        pass_count=$((pass_count + 1))
+    fi
+
     echo_in_yellow "${RUN_BANNER} Normal unmatched"
     args="(a|b)*abb abab"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
+    if echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
+        echo_in_red "${FAILED_BANNER} should exit 1"
+        fail_count=$((fail_count + 1))
+    else
+        echo_in_green "${OK_BANNER}"
+        pass_count=$((pass_count + 1))
+    fi
+
+    echo_in_yellow "${RUN_BANNER} Normal unmatched (cache)"
+    args="-c (a|b)*abb abab"
     echo "${BODY_BANNER} ${EXEC} ${args}"
     if echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
         echo_in_red "${FAILED_BANNER} should exit 1"
@@ -171,6 +193,17 @@ if make clean >/dev/null 2>&1 && make ${BUILD_MODE} >/dev/null 2>&1; then
 
     echo_in_yellow "${RUN_BANNER} Output option set without file specified"
     args="(a|b)*abb ababb -o"
+    echo "${BODY_BANNER} ${EXEC} ${args}"
+    if echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
+        echo_in_red "${FAILED_BANNER} should exit 1"
+        fail_count=$((fail_count + 1))
+    else
+        echo_in_green "${OK_BANNER}"
+        pass_count=$((pass_count + 1))
+    fi
+
+    echo_in_yellow "${RUN_BANNER} Cache option set under graph mode"
+    args="(a|b)*abb ababb -g -c"
     echo "${BODY_BANNER} ${EXEC} ${args}"
     if echo "${args}" | xargs ${EXEC} >/dev/null 2>&1; then
         echo_in_red "${FAILED_BANNER} should exit 1"
