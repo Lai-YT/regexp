@@ -22,4 +22,12 @@ DfaState* create_dfa_state(Map* states);
 /// @note Does not delete the next DFA states.
 void delete_dfa_state(DfaState*);
 
+/// @brief Stores the DFA state to the cache_table.
+void cache_dstate(Map* cache_table, DfaState* dstate);
+
+/// @note This function has side effect on modifing the next states of
+/// curr_dstate on label c, which happens if the next states has a
+/// corresponding DFA state on the cache table.
+bool has_cache(Map* cache_table, DfaState* curr_dstate, char c);
+
 #endif

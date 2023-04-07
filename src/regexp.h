@@ -18,4 +18,8 @@ Map* epsilon_closure(Map* start);
 /// c with non-epsilon moves.
 Map* move(Map*, char c);
 
+/// @return The states reachable from the current states on label c with epsilon
+/// moves.
+Map* get_next_states(Map* current_states, char c);
+
 #endif /* end of include guard: REGEXP_H */
