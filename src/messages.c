@@ -30,7 +30,7 @@ void help() {
  */
 void usage() {
   fprintf(stdout, YELLOW "Usage: " NO_COLOR);
-  fprintf(stdout, "%s [-h] [-V] [-d regexp [-o FILE]] [regexp string]\n\n",
+  fprintf(stdout, "%s [-h] [-V] [-d regexp [-o FILE]] [[-c] regexp string]\n\n",
           __PROGRAM_NAME__);
 }
 
@@ -72,6 +72,7 @@ void match_mode() {
           "  Matches the string with the regular expression,\n"
           "  exits with 1 if regexp is ill-formed or it does not match\n"
           "\n"
+          "  -c, --cache           Caches NFA states to build DFA on the fly\n"
           "  regexp                The regular expression to use on matching\n"
           "  string                The string to be matched\n"
           "\n" NO_COLOR);
