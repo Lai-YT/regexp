@@ -24,6 +24,7 @@ https://opensource.org/license/mit/.
 static void set_default_options(options_t* options) {
   options->help = false;
   options->version = false;
+  options->cache = false;
   options->graph = false;
   strncpy(options->filename, "nfa", BUF_SIZE);
 }
@@ -42,6 +43,10 @@ void switch_options(int arg, options_t* options) {
       options->version = true;
       version();
       exit(EXIT_SUCCESS);
+
+    case 'c':
+      options->cache = true;
+      break;
 
     case 'g':
       options->graph = true;
@@ -95,16 +100,14 @@ void options_parser(int argc, char* argv[], options_t* options) {
 
   /* getopt allowed options */
   static struct option long_options[] = {
-      {"help", no_argument, 0, 'h'},
-      {"version", no_argument, 0, 'V'},
-      {"graph", no_argument, 0, 'g'},
-      {"output", required_argument, 0, 'o'},
-      {0, 0, 0, 0},
+      {"help", no_argument, 0, 'h'},         {"version", no_argument, 0, 'V'},
+      {"cache", no_argument, 0, 'c'},        {"graph", no_argument, 0, 'g'},
+      {"output", required_argument, 0, 'o'}, {0, 0, 0, 0},
   };
 
   while (true) {
     int option_index = 0;
-    arg = getopt_long(argc, argv, "hVgo:", long_options, &option_index);
+    arg = getopt_long(argc, argv, "hVcgo:", long_options, &option_index);
 
     /* End of the options? */
     if (arg == -1) {

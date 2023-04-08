@@ -152,6 +152,18 @@ static void test_is_accepted() {
   delete_nfa(nfa);
 }
 
+static void test_is_accepted_with_cache() {
+  // a -> b -> accept
+  State* accept = create_state(ACCEPT, NULL);
+  State* b = create_state('b', &accept);
+  State* a = create_state('a', &b);
+  Nfa* nfa = create_nfa(a, accept);
+
+  assert_true(is_accepted_with_cache(nfa, "ab"));
+
+  delete_nfa(nfa);
+}
+
 static void test_all_regexp() {
   const char* re = "(a|b)*abb";  // consists only a/b and ends with abb
 
@@ -164,6 +176,22 @@ static void test_all_regexp() {
   assert_true(is_accepted(nfa, "abaabbaabb"));
   assert_false(is_accepted(nfa, "abaabbbb"));
   assert_false(is_accepted(nfa, "abaabbab"));
+
+  delete_nfa(nfa);
+}
+
+static void test_all_regexp_with_cache() {
+  const char* re = "(a|b)*abb";  // consists only a/b and ends with abb
+
+  const char* post = re2post(re);
+  Nfa* nfa = post2nfa(post);
+
+  assert_true(is_accepted_with_cache(nfa, "abb"));
+  assert_true(is_accepted_with_cache(nfa, "babb"));
+  assert_true(is_accepted_with_cache(nfa, "bbbbabb"));
+  assert_true(is_accepted_with_cache(nfa, "abaabbaabb"));
+  assert_false(is_accepted_with_cache(nfa, "abaabbbb"));
+  assert_false(is_accepted_with_cache(nfa, "abaabbab"));
 
   delete_nfa(nfa);
 }

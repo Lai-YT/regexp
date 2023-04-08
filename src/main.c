@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
   fprintf(stdout, CYAN "Command line options:\n" NO_COLOR);
   fprintf(stdout, CYAN "  help: %d\n" NO_COLOR, options.help);
   fprintf(stdout, CYAN "  version: %d\n" NO_COLOR, options.version);
+  fprintf(stdout, CYAN "  cache: %d\n" NO_COLOR, options.cache);
   fprintf(stdout, CYAN "  graph: %d\n" NO_COLOR, options.graph);
   fprintf(stdout, CYAN "  filename: %s\n" NO_COLOR, options.filename);
   fprintf(stdout, CYAN "  regexp: %s\n" NO_COLOR, options.regexp);
@@ -57,7 +58,9 @@ int main(int argc, char* argv[]) {
     return EXIT_SUCCESS;
   }
 
-  bool matches_the_string = is_accepted(nfa, options.string);
+  bool matches_the_string = options.cache
+                                ? is_accepted_with_cache(nfa, options.string)
+                                : is_accepted(nfa, options.string);
   if (matches_the_string) {
 #ifdef DEBUG
     fprintf(stdout, YELLOW "The regexp matches the string.\n" NO_COLOR);

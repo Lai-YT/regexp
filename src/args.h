@@ -18,6 +18,7 @@ https://opensource.org/license/mit/.
 struct options {
   bool help;
   bool version;
+  bool cache;
   bool graph;
   char filename[BUF_SIZE];
   char regexp[BUF_SIZE];

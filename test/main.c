@@ -54,6 +54,8 @@ int main(void) {
       cmocka_unit_test(test_move_null),
       cmocka_unit_test(test_is_accepted),
       cmocka_unit_test(test_all_regexp),
+      cmocka_unit_test(test_is_accepted_with_cache),
+      cmocka_unit_test(test_all_regexp_with_cache),
       // map.h
       cmocka_unit_test(test_map_insert_and_search),
       cmocka_unit_test(test_map_delete),

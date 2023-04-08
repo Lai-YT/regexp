@@ -33,14 +33,7 @@ static void collect_reachable_states(Map* states, State* start) {
 static void delete_reachable_states(State* s) {
   Map* states_to_delete = create_map();
   collect_reachable_states(states_to_delete, s);
-
-  MapIterator* itr = create_map_iterator(states_to_delete);
-  while (has_next(itr)) {
-    to_next(itr);
-    delete_state(get_current_value(itr));
-  }
-  delete_map_iterator(itr);
-
+  FOR_EACH_ITR(states_to_delete, itr, delete_state(get_current_value(itr)));
   delete_map(states_to_delete);
 }
 
