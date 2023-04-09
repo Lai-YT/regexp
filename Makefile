@@ -109,12 +109,16 @@ help:
 	@echo "    clean    - Cleans the project by removing binaries"
 	@echo "    help     - Prints a help message with target rules"
 
+# Creates the directories needed for compilation
+build_dir:
+	@mkdir -p $(LIBDIR) $(BINDIR)
+
 # Rule for link and generate the binary file
 debug: CFLAGS += $(DEBUG)
 release: CFLAGS += $(RELEASE)
-debug release: $(OBJECTS)
+debug release: build_dir $(OBJECTS)
 	@echo -en "$(YELLOW)LD $(END_COLOR)";
-	$(CC) -o $(BINDIR)/$(BINARY) $+ $(CFLAGS) $(LIBS)
+	$(CC) -o $(BINDIR)/$(BINARY) $(filter-out $<,$^) $(CFLAGS) $(LIBS)
 	@echo -e "$(YELLOW)End $@ build.$(END_COLOR)"
 	@echo -en "\n--\nBinary file placed at" \
 			  "$(YELLOW)$(BINDIR)/$(BINARY)$(END_COLOR)\n";
@@ -128,6 +132,7 @@ $(LIBDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 
 # Rule for run valgrind tool
 valgrind:
+	@mkdir -p $(LOGDIR)
 	valgrind \
 		--track-origins=yes \
 		--leak-check=full \
