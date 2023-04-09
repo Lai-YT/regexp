@@ -1,0 +1,31 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  set-up:
+    runs-on: ubuntu-22.04
+    name: Set environment
+    steps:
+    - name: Update apt
+      run: sudo apt update
+    - name: Install Make & CMake
+      # CMake is needed for the installation of CMocka
+      run:  sudo apt install make cmake
+    - name: Install CMocka
+      run: |
+        curl https://cmocka.org/files/1.1/cmocka-1.1.7.tar.xz -o cmocka-1.1.7.tar.xz
+        tar Jxvf cmocka-1.1.7.tar.xz
+        cd cmocka-1.1.7
+        mkdir build
+        cd build
+        cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
+        make
+        make install
+    - name: Install Valgrind
+      run: sudo apt install -y valgrind
+  build:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Compile regexp
+      run: make release
