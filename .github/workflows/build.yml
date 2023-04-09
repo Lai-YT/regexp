@@ -21,7 +21,7 @@ jobs:
         cd build
         cmake -DCMAKE_BUILD_TYPE=Release ..
         make
-        make install
+        sudo make install
     - name: Install Valgrind
       run: sudo apt install -y valgrind
     - name: Checkout repo
