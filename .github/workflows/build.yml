@@ -3,9 +3,9 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  set-up:
+  build:
     runs-on: ubuntu-22.04
-    name: Set environment
+    name: Build project
     steps:
     - name: Update apt
       run: sudo apt update
@@ -24,11 +24,7 @@ jobs:
         make install
     - name: Install Valgrind
       run: sudo apt install -y valgrind
-  build:
-    runs-on: ubuntu-22.04
-    name: build regexp
-    steps:
-    - name: Checkout
+    - name: Checkout repo
       uses: actions/checkout@v3
     - name: Compile regexp
       run: make release
