@@ -12,14 +12,14 @@ jobs:
     - name: Install Make & CMake
       # CMake is needed for the installation of cmocka
       run:  sudo apt install make cmake
-    - name: Install cmocka
-      run: |
-        SCRIPT='./.github/scripts/install_cmocka.sh'
-        chmod +x "$SCRIPT" && "$SCRIPT"
       shell: sh
     - name: Install Valgrind
       run: sudo apt install -y valgrind
     - name: Checkout repo
       uses: actions/checkout@v3
+    - name: Install cmocka
+      run: |
+        SCRIPT='./.github/scripts/install_cmocka.sh'
+        chmod +x "$SCRIPT" && "$SCRIPT"
     - name: Compile regexp
       run: make release
