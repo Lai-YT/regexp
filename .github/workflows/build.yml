@@ -10,9 +10,9 @@ jobs:
     - name: Update apt
       run: sudo apt update
     - name: Install Make & CMake
-      # CMake is needed for the installation of CMocka
+      # CMake is needed for the installation of cmocka
       run:  sudo apt install make cmake
-    - name: Install CMocka
+    - name: Install cmocka
       run: |
         curl https://cmocka.org/files/1.1/cmocka-1.1.7.tar.xz -o cmocka-1.1.7.tar.xz
         tar Jxvf cmocka-1.1.7.tar.xz
