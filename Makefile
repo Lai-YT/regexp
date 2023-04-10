@@ -77,7 +77,7 @@ RELEASE := -O3
 LIBS := -lm
 
 # Test libraries
-TEST_LIBS := -l cmocka -L /usr/lib
+TEST_LIBS := -l cmocka
 
 
 # Tests binary file
