@@ -21,5 +21,9 @@ jobs:
       run: |
         SCRIPT='./.github/scripts/install_cmocka.sh'
         chmod +x "$SCRIPT" && "$SCRIPT"
-    - name: Compile regexp
-      run: make release
+    - name: Run unit tests
+      run: make tests
+    - name: Check memory management bugs with Valgrind
+      run: make valgrind
+    - name: Run CLI tests under release build
+      run: chmod +x ./cli_test.sh && ./cli_test.sh -r
