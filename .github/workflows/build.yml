@@ -7,20 +7,11 @@ jobs:
     runs-on: ubuntu-22.04
     name: Build & Test
     steps:
-      - name: Update apt
-        run: sudo apt update
-      - name: Install Make & CMake
-        # CMake is needed for the installation of cmocka
-        run: sudo apt install make cmake
-        shell: sh
-      - name: Install Valgrind
-        run: sudo apt install -y valgrind
       - name: Checkout repo
         uses: actions/checkout@v3
-      - name: Install cmocka
-        run: |
-          SCRIPT='./.github/scripts/install_cmocka.sh'
-          chmod +x "$SCRIPT" && "$SCRIPT"
+      - name: Set up environment
+        # use the local action specified in action.yml
+        uses: ./.github/workflows
       - name: Run unit tests
         run: make tests
       - name: Check memory management bugs with Valgrind

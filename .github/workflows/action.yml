@@ -1,0 +1,21 @@
+# checkout before using this local action
+name: "Set up environment"
+description: "Installs Make, CMake, Valgrind, and cmocka into the environment"
+runs:
+  using: "composite"
+  steps:
+    - name: Update apt
+      run: sudo apt update
+      shell: sh
+    - name: Install Make & CMake
+      # CMake is needed for the installation of cmocka
+      run: sudo apt install make cmake
+      shell: sh
+    - name: Install Valgrind
+      run: sudo apt install -y valgrind
+      shell: sh
+    - name: Install cmocka
+      run: |
+        SCRIPT='./.github/scripts/install_cmocka.sh'
+        chmod +x "$SCRIPT" && "$SCRIPT"
+      shell: sh
