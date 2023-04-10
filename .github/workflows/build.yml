@@ -5,7 +5,21 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-22.04
-    name: Build & Test
+    name: build
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Set up environment
+        # use the local action specified in action.yml
+        uses: ./.github/workflows
+      - name: Create debug build
+        run: make clean && make debug
+      - name: Create release build
+        run: make clean && make release
+  test:
+    runs-on: ubuntu-22.04
+    name: test
+    needs: build
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -16,5 +30,5 @@ jobs:
         run: make tests
       - name: Check memory management bugs with Valgrind
         run: make valgrind
-      - name: Run CLI tests under release build
+      - name: Run CLI tests on release build
         run: chmod +x ./cli_test.sh && ./cli_test.sh -r
