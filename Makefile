@@ -133,13 +133,16 @@ $(LIBDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 # Rule for run valgrind tool
 valgrind:
 	@mkdir -p $(LOGDIR)
-	valgrind \
+	@valgrind \
 		--track-origins=yes \
 		--leak-check=full \
 		--leak-resolution=high \
+		--error-exitcode=1 \
 		--log-file=$(LOGDIR)/$@.log \
-		$(BINDIR)/$(TEST_BINARY)
-	@echo -en "\nCheck the log file: $(LOGDIR)/$@.log\n"
+		$(BINDIR)/$(TEST_BINARY); \
+	EXIT_CODE=$$?; \
+	echo -e "\nCheck the log file: $(LOGDIR)/$@.log"; \
+	exit $${EXIT_CODE}
 
 
 # Rule for formatting the source code use clang-format
