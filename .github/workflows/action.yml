@@ -4,15 +4,15 @@ description: "Installs Make, CMake, Valgrind, and cmocka into the environment"
 runs:
   using: "composite"
   steps:
-    - name: Update apt
-      run: sudo apt update
+    - name: Update apt-get
+      run: sudo apt-get update
       shell: sh
     - name: Install Make & CMake
       # CMake is needed for the installation of cmocka
-      run: sudo apt install make cmake
+      run: sudo apt-get install make cmake
       shell: sh
     - name: Install Valgrind
-      run: sudo apt install -y valgrind
+      run: sudo apt-get install -y valgrind
       shell: sh
     - name: Install cmocka
       run: |
