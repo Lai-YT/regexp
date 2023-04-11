@@ -26,7 +26,7 @@ static void test_post2nfa_single_character() {
 }
 
 static void test_post2nfa_concat_only() {
-  const char* post = "ab.c.";
+  const char* post = "ab#c#";
 
   Nfa* nfa = post2nfa(post);
 
@@ -143,7 +143,7 @@ static void test_post2nfa_one_or_more() {
 }
 
 static void test_post2nfa_mix() {
-  const char* post = "ab*c|.";  // a(b*|c)
+  const char* post = "ab*c|#";  // a(b*|c)
 
   Nfa* nfa = post2nfa(post);
 
@@ -179,7 +179,7 @@ static void test_post2nfa_mix() {
 }
 
 static void test_post2nfa_concat_one_or_more() {
-  const char* post = "a+b+.";
+  const char* post = "a+b+#";
 
   Nfa* nfa = post2nfa(post);
 
@@ -208,7 +208,7 @@ static void test_post2nfa_concat_one_or_more() {
 }
 
 static void test_post2nfa_concat_zero_or_more() {
-  const char* post = "a*b*.";
+  const char* post = "a*b*#";
 
   Nfa* nfa = post2nfa(post);
 
@@ -246,7 +246,7 @@ static void test_post2nfa_concat_zero_or_more() {
 }
 
 static void test_post2nfa_concat_zero_or_one() {
-  const char* post = "a?b?.";
+  const char* post = "a?b?#";
 
   Nfa* nfa = post2nfa(post);
 
@@ -271,7 +271,7 @@ static void test_post2nfa_missing_operator_should_return_null() {
 }
 
 static void test_post2nfa_missing_operand_should_return_null() {
-  assert_null(post2nfa("a."));
+  assert_null(post2nfa("a#"));
   assert_null(post2nfa("*"));
 }
 

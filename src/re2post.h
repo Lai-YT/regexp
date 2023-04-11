@@ -11,7 +11,7 @@ https://opensource.org/license/mit/.
 #define RE2POST_H
 
 #ifndef EXPLICIT_CONCAT
-#define EXPLICIT_CONCAT '.'
+#define EXPLICIT_CONCAT '#'
 #endif
 
 /// @brief Converts infix regexp re to postfix notation.

@@ -31,7 +31,7 @@ Nfa* post2nfa(const char* post) {
 
   for (; *post; post++) {
     switch (*post) {
-      case '.': {
+      case EXPLICIT_CONCAT: {
         Nfa* n2 = POP();
         Nfa* n1 = POP();
         if (!n1 || !n2) {
