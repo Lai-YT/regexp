@@ -83,6 +83,17 @@ static void test_post2nfa_union_only_complex() {
   delete_nfa(nfa);
 }
 
+static void test_post2nfa_any_concat() {
+  const char* post = "a.#";
+
+  Nfa* nfa = post2nfa(post);
+
+  assert_non_null(nfa);
+  ASSERT_NON_SPLIT_TRANSITION_LABELS(nfa->start, 'a', ANY, ACCEPT);
+
+  delete_nfa(nfa);
+}
+
 static void test_post2nfa_zero_or_more() {
   const char* post = "a*";
 

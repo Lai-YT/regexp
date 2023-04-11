@@ -112,6 +112,11 @@ Nfa* post2nfa(const char* post) {
         PUSH(create_nfa(start, accept));
         free(n);
       } break;
+      case '.': {
+        State* accept = create_state(ACCEPT, NULL);
+        State* start = create_state(ANY, &accept);
+        PUSH(create_nfa(start, accept));
+      } break;
       default: {
         State* accept = create_state(ACCEPT, NULL);
         State* start = create_state(*post, &accept);
