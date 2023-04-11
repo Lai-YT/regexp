@@ -36,6 +36,7 @@ int main(void) {
       cmocka_unit_test(test_create_labeled_state),
       cmocka_unit_test(test_create_epsilon_state),
       cmocka_unit_test(test_create_accepting_state),
+      cmocka_unit_test(test_create_any_state),
       // nfa.h
       cmocka_unit_test(test_create_nfa),
       // post2nfa.h
