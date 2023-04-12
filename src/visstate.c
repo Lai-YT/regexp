@@ -1,4 +1,3 @@
-#include <limits.h>
 #include <stdio.h>
 
 #include "map.h"
@@ -11,8 +10,10 @@ static void state2dot(State* state, FILE* f) {
   for (size_t i = 0; i < num_of_outs(state->label); i++) {
     fprintf(f, "\t%d -> %d", state->id, state->outs[i]->id);
     fputs(" [label = \"", f);
-    if (state->label > CHAR_MAX) {
+    if (state->label == SPLIT || state->label == EPSILON) {
       fputs("eps", f);  // epsilon, avoid unicode
+    } else if (state->label == ANY) {
+      fputs("any", f);
     } else {
       fputc(state->label, f);
     }
