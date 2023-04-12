@@ -27,6 +27,8 @@ static void set_default_options(options_t* options) {
   options->cache = false;
   options->graph = false;
   strncpy(options->filename, "nfa", BUF_SIZE);
+  options->regexp[0] = '\0';
+  options->string[0] = '\0';
 }
 
 /*
