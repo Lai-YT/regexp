@@ -66,6 +66,8 @@ int main(void) {
       cmocka_unit_test(test_is_accepted_with_cache),
       cmocka_unit_test(test_regexp_paren_and_zero_or_more),
       cmocka_unit_test(test_regexp_paren_and_zero_or_more_with_cache),
+      cmocka_unit_test(test_regexp_any_and_one_or_more),
+      cmocka_unit_test(test_regexp_any_and_one_or_more_with_cache),
       // map.h
       cmocka_unit_test(test_map_insert_and_search),
       cmocka_unit_test(test_map_delete),
