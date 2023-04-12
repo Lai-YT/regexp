@@ -11,7 +11,7 @@ https://opensource.org/license/mit/.
 #define MESSAGES_H
 
 #define __PROGRAM_NAME__ "regexp"
-#define __PROGRAM_VERSION__ "0.2.0"
+#define __PROGRAM_VERSION__ "1.0.0"
 #define __PROGRAM_AUTHOR__ "Lai-YT"
 
 void help();
