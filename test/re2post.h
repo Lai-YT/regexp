@@ -11,6 +11,10 @@
 #include <cmocka.h>
 // clang-format on
 
+static void test_re2post_single_character() {
+  assert_string_equal(re2post("a"), "a");
+}
+
 static void test_re2post_concat() {
   assert_string_equal(re2post("abba"), "ab.b.a.");
 }
@@ -37,4 +41,8 @@ static void test_re2post_union_with_paren() {
 
 static void test_re2post_mix() {
   assert_string_equal(re2post("a(bbbb|a|bab)+a"), "abb.b.b.aba.b.||+.a.");
+}
+
+static void test_re2post_empty_re_should_be_empty_post() {
+  assert_string_equal(re2post(""), "");
 }

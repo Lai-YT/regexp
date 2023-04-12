@@ -14,6 +14,17 @@
 #include <cmocka.h>
 // clang-format on
 
+static void test_post2nfa_single_character() {
+  const char* post = "a";
+
+  Nfa* nfa = post2nfa(post);
+
+  assert_non_null(nfa);
+  ASSERT_NON_SPLIT_TRANSITION_LABELS(nfa->start, 'a', ACCEPT);
+
+  delete_nfa(nfa);
+}
+
 static void test_post2nfa_concat_only() {
   const char* post = "ab.c.";
 
@@ -262,4 +273,8 @@ static void test_post2nfa_missing_operator_should_return_null() {
 static void test_post2nfa_missing_operand_should_return_null() {
   assert_null(post2nfa("a."));
   assert_null(post2nfa("*"));
+}
+
+static void test_post2nfa_empty_post_should_return_null() {
+  assert_null(post2nfa(""));
 }

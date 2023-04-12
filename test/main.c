@@ -19,6 +19,7 @@
 int main(void) {
   const struct CMUnitTest tests[] = {
       // re2post.h
+      cmocka_unit_test(test_re2post_single_character),
       cmocka_unit_test(test_re2post_concat),
       cmocka_unit_test(test_re2post_union),
       cmocka_unit_test(test_re2post_paren),
@@ -26,6 +27,7 @@ int main(void) {
       cmocka_unit_test(test_re2post_concat_with_paren),
       cmocka_unit_test(test_re2post_union_with_paren),
       cmocka_unit_test(test_re2post_mix),
+      cmocka_unit_test(test_re2post_empty_re_should_be_empty_post),
       // state.h
       cmocka_unit_test(test_create_labeled_state),
       cmocka_unit_test(test_create_epsilon_state),
@@ -33,6 +35,7 @@ int main(void) {
       // nfa.h
       cmocka_unit_test(test_create_nfa),
       // post2nfa.h
+      cmocka_unit_test(test_post2nfa_single_character),
       cmocka_unit_test(test_post2nfa_concat_only),
       cmocka_unit_test(test_post2nfa_union_only_single),
       cmocka_unit_test(test_post2nfa_union_only_complex),
@@ -45,6 +48,7 @@ int main(void) {
       cmocka_unit_test(test_post2nfa_concat_zero_or_one),
       cmocka_unit_test(test_post2nfa_missing_operator_should_return_null),
       cmocka_unit_test(test_post2nfa_missing_operand_should_return_null),
+      cmocka_unit_test(test_post2nfa_empty_post_should_return_null),
       // regexp.h
       cmocka_unit_test(test_epsilon_closure_on_epsilon),
       cmocka_unit_test(test_epsilon_closure_on_split),
