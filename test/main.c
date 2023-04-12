@@ -43,8 +43,8 @@ int main(void) {
       cmocka_unit_test(test_post2nfa_concat_one_or_more),
       cmocka_unit_test(test_post2nfa_concat_zero_or_more),
       cmocka_unit_test(test_post2nfa_concat_zero_or_one),
-      cmocka_unit_test(test_missing_operator_should_return_null),
-      cmocka_unit_test(test_missing_operand_should_return_null),
+      cmocka_unit_test(test_post2nfa_missing_operator_should_return_null),
+      cmocka_unit_test(test_post2nfa_missing_operand_should_return_null),
       // regexp.h
       cmocka_unit_test(test_epsilon_closure_on_epsilon),
       cmocka_unit_test(test_epsilon_closure_on_split),
@@ -53,9 +53,9 @@ int main(void) {
       cmocka_unit_test(test_move_should_be_one_hop_only),
       cmocka_unit_test(test_move_null),
       cmocka_unit_test(test_is_accepted),
-      cmocka_unit_test(test_all_regexp),
       cmocka_unit_test(test_is_accepted_with_cache),
-      cmocka_unit_test(test_all_regexp_with_cache),
+      cmocka_unit_test(test_regexp_paren_and_zero_or_more),
+      cmocka_unit_test(test_regexp_paren_and_zero_or_more_with_cache),
       // map.h
       cmocka_unit_test(test_map_insert_and_search),
       cmocka_unit_test(test_map_delete),

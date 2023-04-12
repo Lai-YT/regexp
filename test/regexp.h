@@ -164,7 +164,7 @@ static void test_is_accepted_with_cache() {
   delete_nfa(nfa);
 }
 
-static void test_all_regexp() {
+static void test_regexp_paren_and_zero_or_more() {
   const char* re = "(a|b)*abb";  // consists only a/b and ends with abb
 
   const char* post = re2post(re);
@@ -180,7 +180,7 @@ static void test_all_regexp() {
   delete_nfa(nfa);
 }
 
-static void test_all_regexp_with_cache() {
+static void test_regexp_paren_and_zero_or_more_with_cache() {
   const char* re = "(a|b)*abb";  // consists only a/b and ends with abb
 
   const char* post = re2post(re);

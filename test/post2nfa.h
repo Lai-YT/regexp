@@ -254,12 +254,12 @@ static void test_post2nfa_concat_zero_or_one() {
   delete_nfa(nfa);
 }
 
-static void test_missing_operator_should_return_null() {
+static void test_post2nfa_missing_operator_should_return_null() {
   assert_null(post2nfa("ab"));
   assert_null(post2nfa("abc"));
 }
 
-static void test_missing_operand_should_return_null() {
+static void test_post2nfa_missing_operand_should_return_null() {
   assert_null(post2nfa("a."));
   assert_null(post2nfa("*"));
 }
