@@ -3,7 +3,6 @@
 
 #include "nfa.h"
 #include "re2post.h"
-#include "state.h"
 
 Nfa* post2nfa(const char* post);
 
