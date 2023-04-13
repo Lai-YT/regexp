@@ -140,6 +140,10 @@ char* re2post(const char* re) {
   try_append_concat(&curr_paren_unit, &result_tail);
   try_append_unions(&curr_paren_unit, &result_tail);
 
+  if (curr_paren_unit.num_of_union != 0) {
+    return NULL;  // missing operand
+  }
+
   *result_tail = '\0';
   return result;
 }

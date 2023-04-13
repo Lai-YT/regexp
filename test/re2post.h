@@ -63,3 +63,10 @@ static void test_re2post_mix() {
 static void test_re2post_empty_re_should_be_empty_post() {
   assert_string_equal(re2post(""), "");
 }
+
+static void test_re2post_missing_operand_should_return_null() {
+  assert_null(re2post("a|"));
+  assert_null(re2post("*"));
+  assert_null(re2post("?"));
+  assert_null(re2post("+"));
+}
