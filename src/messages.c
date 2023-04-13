@@ -41,11 +41,13 @@ void description() {
   fprintf(stdout, YELLOW "Description: " NO_COLOR);
   fprintf(stdout,
           "Regular expression implementation.\n"
-          "Supports only ( | ) * + ?. No escapes.\n"
+          "Supports . ( ) | * + ?. No escapes.\n"
           "Compiles to NFA and then simulates NFA using Thompson's algorithm.\n"
           "\n"
           "One can either graph the regexp or match a string.\n"
           "See the following options.\n"
+          "Notice that character # can't appear in the regular expression,\n"
+          "it's reserved technically as the special character.\n"
           "\n");
 }
 

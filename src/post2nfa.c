@@ -31,7 +31,7 @@ Nfa* post2nfa(const char* post) {
 
   for (; *post; post++) {
     switch (*post) {
-      case '.': {
+      case EXPLICIT_CONCAT: {
         Nfa* n2 = POP();
         Nfa* n1 = POP();
         if (!n1 || !n2) {
@@ -111,6 +111,11 @@ Nfa* post2nfa(const char* post) {
         State* start = create_state(EPSILON, &n->start);
         PUSH(create_nfa(start, accept));
         free(n);
+      } break;
+      case '.': {
+        State* accept = create_state(ACCEPT, NULL);
+        State* start = create_state(ANY, &accept);
+        PUSH(create_nfa(start, accept));
       } break;
       default: {
         State* accept = create_state(ACCEPT, NULL);

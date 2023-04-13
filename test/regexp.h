@@ -195,3 +195,31 @@ static void test_regexp_paren_and_zero_or_more_with_cache() {
 
   delete_nfa(nfa);
 }
+
+static void test_regexp_any_and_one_or_more() {
+  const char* re = ".+";
+
+  const char* post = re2post(re);
+  Nfa* nfa = post2nfa(post);
+
+  assert_true(is_accepted(nfa, "a"));
+  assert_true(is_accepted(nfa, "ab"));
+  assert_true(is_accepted(nfa, "abc"));
+  assert_false(is_accepted(nfa, ""));
+
+  delete_nfa(nfa);
+}
+
+static void test_regexp_any_and_one_or_more_with_cache() {
+  const char* re = ".+";
+
+  const char* post = re2post(re);
+  Nfa* nfa = post2nfa(post);
+
+  assert_true(is_accepted_with_cache(nfa, "a"));
+  assert_true(is_accepted_with_cache(nfa, "ab"));
+  assert_true(is_accepted_with_cache(nfa, "abc"));
+  assert_false(is_accepted_with_cache(nfa, ""));
+
+  delete_nfa(nfa);
+}

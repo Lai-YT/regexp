@@ -7,6 +7,7 @@ enum {
   EPSILON = 128,
   SPLIT = 129,
   ACCEPT = 130,
+  ANY = 131,  // any non-epsilon label
 };
 
 typedef struct State {

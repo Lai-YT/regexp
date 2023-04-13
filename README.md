@@ -15,7 +15,7 @@
 <p align="center">
   Regular expression implementation.
   <br>
-  Supports only ( | ) * + ?. No escapes.
+  Supports . ( ) | * + ?. No escapes.
 </p>
 
 ## 📝 Table of Contents
@@ -78,11 +78,13 @@ regexp
 Usage: regexp [-h] [-V] [-d regexp [-o FILE]] [[-c] regexp string]
 
 Description: Regular expression implementation.
-Supports only ( | ) * + ?. No escapes.
+Supports . ( ) | * + ?. No escapes.
 Compiles to NFA and then simulates NFA using Thompson's algorithm.
 
 One can either graph the regexp or match a string.
 See the following options.
+Notice that character # can't appear in the regular expression,
+it's reserved technically as the special character.
 
 Options:
   -h, --help            Shows this help message and exit
@@ -110,7 +112,7 @@ Match mode:
 
 Written by: Lai-YT
 
-regexp version: 0.2.0
+regexp version: 1.0.0
 ```
 
 ### Example
@@ -191,7 +193,7 @@ Target rules:
 
 ### Implementation
 _regex_ matches strings with regular expressions in 3 steps:
-1. The regular expression is converted into a parenthesis-free postfix notation using the `.` operator to make concatenations explicit. This is implemented in [re2post.c](src/re2post.c).
+1. The regular expression is converted into a parenthesis-free postfix notation using the `#` operator to make concatenations explicit. This is implemented in [re2post.c](src/re2post.c).
 2. The postfixed regular expression is converted into a Nondeterministic Finite Automaton (NFA) using Thompson's algorithm. This step is implemented in [post2nfa.c](src/post2nfa.c).
 3. Reads in the input string character by character and walks along the NFA. If it stops at the accepting state when the entire string has been read, the string is considered a match. This step is implemented in [regexp.c](src/regexp.c).
 

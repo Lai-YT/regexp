@@ -84,7 +84,7 @@ Map* move(Map* from, char c) {
   Map* outs = create_map();
   FOR_EACH_ITR(from, itr, {
     State* s = get_current_value(itr);
-    if (s->label == c) {
+    if (s->label == c || s->label == ANY) {
       insert_pair(outs, s->outs[0]->id, s->outs[0]);
     }
   });

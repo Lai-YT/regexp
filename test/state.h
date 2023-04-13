@@ -46,3 +46,15 @@ static void test_create_accepting_state() {
 
   delete_state(accepting_state);
 }
+
+static void test_create_any_state() {
+  State out;  // ill-formed but doesn't matter
+  State* outs[] = {&out};
+
+  State* any_state = create_state(ANY, outs);
+
+  ASSERT_LABEL(any_state, ANY);
+  assert_ptr_equal(any_state->outs[0], outs[0]);
+
+  delete_state(any_state);
+}

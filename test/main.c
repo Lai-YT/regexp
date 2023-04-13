@@ -23,6 +23,10 @@ int main(void) {
       cmocka_unit_test(test_re2post_concat),
       cmocka_unit_test(test_re2post_union),
       cmocka_unit_test(test_re2post_paren),
+      cmocka_unit_test(test_re2post_zero_or_more),
+      cmocka_unit_test(test_re2post_one_or_more),
+      cmocka_unit_test(test_re2post_zero_or_one),
+      cmocka_unit_test(test_re2post_any),
       cmocka_unit_test(test_re2post_union_and_concat),
       cmocka_unit_test(test_re2post_concat_with_paren),
       cmocka_unit_test(test_re2post_union_with_paren),
@@ -32,6 +36,7 @@ int main(void) {
       cmocka_unit_test(test_create_labeled_state),
       cmocka_unit_test(test_create_epsilon_state),
       cmocka_unit_test(test_create_accepting_state),
+      cmocka_unit_test(test_create_any_state),
       // nfa.h
       cmocka_unit_test(test_create_nfa),
       // post2nfa.h
@@ -42,6 +47,7 @@ int main(void) {
       cmocka_unit_test(test_post2nfa_zero_or_more),
       cmocka_unit_test(test_post2nfa_zero_or_one),
       cmocka_unit_test(test_post2nfa_one_or_more),
+      cmocka_unit_test(test_post2nfa_any_concat),
       cmocka_unit_test(test_post2nfa_mix),
       cmocka_unit_test(test_post2nfa_concat_one_or_more),
       cmocka_unit_test(test_post2nfa_concat_zero_or_more),
@@ -60,6 +66,8 @@ int main(void) {
       cmocka_unit_test(test_is_accepted_with_cache),
       cmocka_unit_test(test_regexp_paren_and_zero_or_more),
       cmocka_unit_test(test_regexp_paren_and_zero_or_more_with_cache),
+      cmocka_unit_test(test_regexp_any_and_one_or_more),
+      cmocka_unit_test(test_regexp_any_and_one_or_more_with_cache),
       // map.h
       cmocka_unit_test(test_map_insert_and_search),
       cmocka_unit_test(test_map_delete),
