@@ -70,3 +70,8 @@ static void test_re2post_missing_operand_should_return_null() {
   assert_null(re2post("?"));
   assert_null(re2post("+"));
 }
+
+static void test_re2post_mismatch_paren_should_return_null() {
+  assert_null(re2post("a(bc"));
+  assert_null(re2post("ab)c"));
+}

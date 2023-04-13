@@ -10,15 +10,17 @@ https://opensource.org/license/mit/.
 #include "re2post.h"
 
 #include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include "stack.h"
+
 #define BUF_SIZE 8000
-#define MAX_NESTED_DEPTH 100
 
 /// @brief operators eat up symbols immediately, while the two binary operators,
 /// . and |, don't. Since the union operator is explicitly notated in the
 /// regular expression, it's being counted.
-typedef struct Unit {
+typedef struct {
   int num_of_union;
   int num_of_unit;
 } Unit;
@@ -26,15 +28,11 @@ typedef struct Unit {
 /// @brief whether the buffer may overflow after adding explicit concatenation
 /// symbols.
 static bool buf_may_overflow(const char* re);
-static bool has_too_many_nested_parens(const int depth);
 
 static bool has_unit_to_operate(Unit unit);
 static bool has_units_to_concat(Unit unit);
 static bool has_units_to_union(Unit unit);
 
-static bool has_stashed_unit(Unit* stack, Unit* top);
-static void stash_unit(Unit** stack, Unit unit);
-static void restore_unit(Unit** stack, Unit* unit);
 static void init_unit(Unit* unit);
 
 /// @brief Tries to append a explicit concatenation operator to the result.
@@ -66,57 +64,66 @@ char* re2post(const char* re) {
 
   char* result_tail = result;
 
-  /// @brief A stack. Stashing the nested parentheses units seen so far, so we
+  /// @brief Stashing the nested parentheses units seen so far, so we
   /// can restore them after converting inner nested parenthesized units. Treat
   /// the converted unit as a single unit, and resume the conversion.
-  Unit paren_units[MAX_NESTED_DEPTH];
-  Unit* top_unit = paren_units;  // it's in fact the one above the top
-  Unit curr_paren_unit;          // the unit that we're now converting
-  init_unit(&curr_paren_unit);
+  Stack* paren_units = create_stack();
+  Unit* curr_paren_unit = malloc(sizeof(Unit));
+  init_unit(curr_paren_unit);
+
+#define FREE_HEAP_ALLOCATED_VARS()         \
+    free(curr_paren_unit);                 \
+    while (!is_empty_stack(paren_units)) { \
+      free((Unit*)pop_stack(paren_units)); \
+    }                                      \
+    delete_stack(paren_units);             \
 
   for (; *re; re++) {
     switch (*re) {
       case '(':
-        if (has_too_many_nested_parens(top_unit - paren_units)) {
-          return NULL;
-        }
         // the previous units are converted first
         // because concatenation is left-associative,
-        try_append_concat(&curr_paren_unit, &result_tail);
+        try_append_concat(curr_paren_unit, &result_tail);
 
         // a new parenthesized unit is now about to start,
         // stash the current one and move on
-        stash_unit(&top_unit, curr_paren_unit);
-        init_unit(&curr_paren_unit);
+        push_stack(paren_units, curr_paren_unit);
+        curr_paren_unit = malloc(sizeof(Unit));
+        init_unit(curr_paren_unit);
         break;
       case '|':
-        if (!has_unit_to_operate(curr_paren_unit)) {
+        if (!has_unit_to_operate(*curr_paren_unit)) {
+          FREE_HEAP_ALLOCATED_VARS();
           return NULL;
         }
         // the previous concatenations are converted first
         // because union has lower precedence than concatenation,
-        try_append_concat(&curr_paren_unit, &result_tail);
+        try_append_concat(curr_paren_unit, &result_tail);
 
-        curr_paren_unit.num_of_union++;
+        curr_paren_unit->num_of_union++;
         break;
       case ')':
-        if (!has_stashed_unit(paren_units, top_unit)
-            || !has_unit_to_operate(curr_paren_unit)) {
+        if (is_empty_stack(paren_units)
+            || !has_unit_to_operate(*curr_paren_unit)) {
+          FREE_HEAP_ALLOCATED_VARS();
           return NULL;
         }
+
         // The current unit is about to complete, append the awaiting operators.
-        try_append_concat(&curr_paren_unit, &result_tail);
-        try_append_unions(&curr_paren_unit, &result_tail);
+        try_append_concat(curr_paren_unit, &result_tail);
+        try_append_unions(curr_paren_unit, &result_tail);
 
         // the current parenthesized unit is converted and becomes a single
         // unit. Restore the outer unit
-        restore_unit(&top_unit, &curr_paren_unit);
-        curr_paren_unit.num_of_unit++;
+        free(curr_paren_unit);
+        curr_paren_unit = pop_stack(paren_units);
+        curr_paren_unit->num_of_unit++;
         break;
       case '*':
       case '+':
       case '?':
-        if (!has_unit_to_operate(curr_paren_unit)) {
+        if (!has_unit_to_operate(*curr_paren_unit)) {
+          FREE_HEAP_ALLOCATED_VARS();
           return NULL;
         }
         // unary left-associative with highest precedence,
@@ -126,23 +133,26 @@ char* re2post(const char* re) {
       default:
         // the previous units are converted first
         // because concatenation is left-associative
-        try_append_concat(&curr_paren_unit, &result_tail);
-
+        try_append_concat(curr_paren_unit, &result_tail);
         *result_tail++ = *re;
-        curr_paren_unit.num_of_unit++;
+        curr_paren_unit->num_of_unit++;
         break;
     }
   }
-  if (has_stashed_unit(paren_units, top_unit)) {
+  if (!is_empty_stack(paren_units)) {
+    FREE_HEAP_ALLOCATED_VARS();
     return NULL;  // unmatched parentheses
   }
   // The conversion is about to complete, append the awaiting operators.
-  try_append_concat(&curr_paren_unit, &result_tail);
-  try_append_unions(&curr_paren_unit, &result_tail);
+  try_append_concat(curr_paren_unit, &result_tail);
+  try_append_unions(curr_paren_unit, &result_tail);
 
-  if (curr_paren_unit.num_of_union != 0) {
+  if (curr_paren_unit->num_of_union != 0) {
+    FREE_HEAP_ALLOCATED_VARS();
     return NULL;  // missing operand
   }
+
+  FREE_HEAP_ALLOCATED_VARS();
 
   *result_tail = '\0';
   return result;
@@ -152,25 +162,10 @@ static void init_unit(Unit* unit) {
   *unit = (Unit){.num_of_union = 0, .num_of_unit = 0};
 }
 
-static void stash_unit(Unit** stack, Unit unit) {
-  **stack = unit;
-  (*stack)++;  // push
-}
-
-static void restore_unit(Unit** stack, Unit* unit) {
-  Unit* top = *stack - 1;
-  *unit = *top;
-  (*stack)--;  // pop
-}
-
 static bool buf_may_overflow(const char* re) {
   // the number of concat symbol can at most be strlen(re) - 1 when re contains
   // only concatenations
   return strlen(re) > BUF_SIZE / 2;
-}
-
-static bool has_too_many_nested_parens(const int depth) {
-  return depth > MAX_NESTED_DEPTH;
 }
 
 static void try_append_concat(Unit* unit, char** result) {
@@ -180,6 +175,7 @@ static void try_append_concat(Unit* unit, char** result) {
     (*result)++;
   }
 }
+
 static void try_append_unions(Unit* unit, char** result) {
   while (has_units_to_union(*unit)) {
     --unit->num_of_union;
@@ -201,8 +197,4 @@ static bool has_units_to_concat(Unit unit) {
 static bool has_units_to_union(Unit unit) {
   // binary operator needs at least 2 units
   return unit.num_of_union >= 1 && unit.num_of_unit >= 2;
-}
-
-static bool has_stashed_unit(Unit* stack, Unit* top) {
-  return top != stack;
 }

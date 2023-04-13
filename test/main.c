@@ -33,6 +33,7 @@ int main(void) {
       cmocka_unit_test(test_re2post_mix),
       cmocka_unit_test(test_re2post_empty_re_should_be_empty_post),
       cmocka_unit_test(test_re2post_missing_operand_should_return_null),
+      cmocka_unit_test(test_re2post_mismatch_paren_should_return_null),
       // state.h
       cmocka_unit_test(test_create_labeled_state),
       cmocka_unit_test(test_create_epsilon_state),
