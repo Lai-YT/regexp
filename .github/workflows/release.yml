@@ -7,6 +7,10 @@ on:
 
 jobs:
   update_release_draft:
+    name: Update release draft
+    permissions:
+      contents: write # to create a github release
+      pull-requests: read
     runs-on: ubuntu-latest
     steps:
       - name: version
