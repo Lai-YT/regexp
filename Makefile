@@ -145,12 +145,17 @@ valgrind:
 	exit $${EXIT_CODE}
 
 
-# Rule for formatting the source code use clang-format
+# Rule for formatting the source code with clang-format
 fmt:
 	@clang-format -i \
 		-style=file \
 		{$(SRCDIR),$(TESTDIR)}/*.{h,c}
 
+# Rule for enforcing naming conventions and checking proneness to bugs with clang-tidy
+tidy:
+	@clang-tidy --quiet \
+		{$(SRCDIR),$(TESTDIR)}/*.{h,c} \
+		-- $(CFLAGS)
 
 # Compile tests and run the test binary
 tests: debug
