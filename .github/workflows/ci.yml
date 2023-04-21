@@ -33,7 +33,7 @@ jobs:
       - name: Run CLI tests on release build
         run: chmod +x ./cli_test.sh && ./cli_test.sh -r
   lint:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.base_ref == 'main'
     name: lint
     runs-on: ubuntu-22.04
     needs: build
