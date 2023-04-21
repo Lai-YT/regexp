@@ -42,7 +42,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Install cmocka
         # clang-tidy requires code to be compilable
-        run: ./.github/scripts/install_cmocka.sh
+        run: |
+          SCRIPT='./.github/scripts/install_cmocka.sh'
+          chmod +x "$SCRIPT" && "$SCRIPT"
       - name: Check coding styles
         run: make fmt FMTFLAGS='--dry-run --Werror'
       - name: Check naming conventions & bug-proneness
