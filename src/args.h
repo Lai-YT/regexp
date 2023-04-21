@@ -26,9 +26,9 @@ struct options {
 };
 
 /* Exports options as a global type */
-typedef struct options options_t;
+typedef struct options Options;
 
 /* Public functions section */
-void options_parser(int argc, char* argv[], options_t* options);
+void options_parser(int argc, char* argv[], Options* options);
 
 #endif  // ARGS_H

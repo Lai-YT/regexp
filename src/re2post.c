@@ -71,12 +71,12 @@ char* re2post(const char* re) {
   Unit* curr_paren_unit = malloc(sizeof(Unit));
   init_unit(curr_paren_unit);
 
-#define FREE_HEAP_ALLOCATED_VARS()         \
-    free(curr_paren_unit);                 \
-    while (!is_empty_stack(paren_units)) { \
-      free((Unit*)pop_stack(paren_units)); \
-    }                                      \
-    delete_stack(paren_units);             \
+#define FREE_HEAP_ALLOCATED_VARS()       \
+  free(curr_paren_unit);                 \
+  while (!is_empty_stack(paren_units)) { \
+    free((Unit*)pop_stack(paren_units)); \
+  }                                      \
+  delete_stack(paren_units);
 
   for (; *re; re++) {
     switch (*re) {

@@ -17,7 +17,7 @@ https://opensource.org/license/mit/.
  * Help message
  */
 void help() {
-  fprintf(stdout, CYAN __PROGRAM_NAME__ "\n\n" NO_COLOR);
+  fprintf(stdout, CYAN PROGRAM_NAME "\n\n" NO_COLOR);
   usage();
   description();
   options();
@@ -31,7 +31,7 @@ void help() {
 void usage() {
   fprintf(stdout, YELLOW "Usage: " NO_COLOR);
   fprintf(stdout, "%s [-h] [-V] [-d regexp [-o FILE]] [[-c] regexp string]\n\n",
-          __PROGRAM_NAME__);
+          PROGRAM_NAME);
 }
 
 /*
@@ -90,7 +90,7 @@ void options() {
           "  -h, --help            Shows this help message and exit\n"
           "  -V, --version         Shows %s version and exit\n"
           "\n" NO_COLOR,
-          __PROGRAM_NAME__);
+          PROGRAM_NAME);
   graph_mode();
   match_mode();
 }
@@ -100,13 +100,13 @@ void options() {
  */
 void author() {
   fprintf(stdout, YELLOW "Written by: " WHITE "%s\n\n" NO_COLOR,
-          __PROGRAM_AUTHOR__);
+          PROGRAM_AUTHOR);
 }
 
 /*
  * Version message
  */
 void version() {
-  fprintf(stdout, __PROGRAM_NAME__ " version: " WHITE "%s\n" NO_COLOR,
-          __PROGRAM_VERSION__);
+  fprintf(stdout, PROGRAM_NAME " version: " WHITE "%s\n" NO_COLOR,
+          PROGRAM_VERSION);
 }

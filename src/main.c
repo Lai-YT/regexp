@@ -18,7 +18,7 @@ https://opensource.org/license/mit/.
 
 int main(int argc, char* argv[]) {
   /* Read command line options */
-  options_t options;
+  Options options;
   options_parser(argc, argv, &options);
 
 #ifdef DEBUG

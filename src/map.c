@@ -84,7 +84,7 @@ static int get_hashed_key(int key, size_t capacity, int attempt) {
   return (hash1(key, prime_1) + hash2(key, prime_2) * attempt) % capacity;
 }
 
-static MapPair* PAIR_DELETED_MARKER = NULL;
+static MapPair* const PAIR_DELETED_MARKER = NULL;
 
 /// @return Whether the key of the pair is "key".
 /// @note Not null-safe.
