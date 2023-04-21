@@ -29,7 +29,7 @@ State* create_state(const int label, State** outs) {
   new_state->label = label;
   new_state->id = state_id++;
 
-  new_state->outs = malloc(sizeof *new_state->outs * num_of_outs(label));
+  new_state->outs = malloc(sizeof(State) * num_of_outs(label));
   if (label == ACCEPT) {
     new_state->outs[0] = NULL;
   } else {

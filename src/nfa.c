@@ -6,7 +6,11 @@
 #include "map.h"
 #include "state.h"
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 Nfa* create_nfa(State* start, State* accept) {
+  // reason: a struct should be used in the case that parameters are
+  // easily swappable, but this function is exactly a
+  // creation of struct.
   Nfa* n = malloc(sizeof(Nfa));
   n->start = start;
   n->accept = accept;

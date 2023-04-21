@@ -26,7 +26,8 @@ static void test_create_labeled_state() {
 }
 
 static void test_create_epsilon_state() {
-  State out1, out2;  // ill-formed but doesn't matter
+  State out1;
+  State out2;  // ill-formed but doesn't matter
   State* outs[] = {&out1, &out2};
 
   State* epsilon_state = create_state(SPLIT, outs);
