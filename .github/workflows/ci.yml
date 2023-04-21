@@ -40,6 +40,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: Install cmocka
+        # clang-tidy requires code to be compilable
+        run: ./.github/scripts/install_cmocka.sh
       - name: Check coding styles
         run: make fmt FMTFLAGS='--dry-run --Werror'
       - name: Check naming conventions & bug-proneness
