@@ -18,12 +18,12 @@ static void test_map_insert_and_search() {
   int keys[] = {9, 217, 100};
   int vals[] = {90, 2170, 1000};
 
-  for (size_t i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     insert_pair(map, keys[i], vals + i);
   }
 
   assert_int_equal(get_size(map), 3);
-  for (size_t i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     int* val = get_value(map, keys[i]);
     assert_non_null(val);
     assert_ptr_equal(val, vals + i);
@@ -38,7 +38,7 @@ void test_map_delete() {
   Map* map = create_map();
   int keys[] = {9, 100, 217};
   int vals[] = {90, 2170, 1000};
-  for (size_t i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     insert_pair(map, keys[i], vals + i);
   }
 
@@ -60,17 +60,17 @@ void test_map_capacity_should_grow() {
   };
   Map* map = create_map();
   int keys[NUM_OF_PAIRS];
-  for (size_t i = 0; i < NUM_OF_PAIRS; i++) {
+  for (int i = 0; i < NUM_OF_PAIRS; i++) {
     keys[i] = i;
   }
   int vals[NUM_OF_PAIRS];  // using the memory address, not initialized
 
-  for (size_t i = 0; i < NUM_OF_PAIRS; i++) {
+  for (int i = 0; i < NUM_OF_PAIRS; i++) {
     insert_pair(map, keys[i], vals + i);
   }
 
   assert_int_equal(get_size(map), NUM_OF_PAIRS);
-  for (size_t i = 0; i < NUM_OF_PAIRS; i++) {
+  for (int i = 0; i < NUM_OF_PAIRS; i++) {
     int* val = get_value(map, keys[i]);
     assert_non_null(val);
     assert_ptr_equal(vals + i, val);
@@ -84,7 +84,7 @@ static void test_map_iterator() {
   Map* map = create_map();
   int keys[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};  // as same as indices
   int vals[10];  // using the memory address, not initialized
-  for (size_t i = 0; i < 10; i++) {
+  for (int i = 0; i < 10; i++) {
     insert_pair(map, keys[i], vals + i);
   }
 

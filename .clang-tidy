@@ -1,0 +1,32 @@
+Checks: >
+  -*,
+  bugprone-*,
+  performance-*,
+  readability-braces-around-statements,
+  readability-function-size,
+  readability-identifier-naming,
+  readability-inconsistent-declaration-parameter-name,
+  readability-isolate-declaration,
+  readability-magic-numbers
+  readability-misleading-indentation,
+  readability-non-const-parameter,
+  readability-redundant-control-flow,
+  readability-redundant-declaration,
+  readability-redundant-preprocessor,
+  readability-simplify-boolean-expr,
+
+WarningsAsErrors: "*"
+
+CheckOptions:
+  - { key: readability-identifier-naming.StructCase, value: CamelCase }
+  - { key: readability-identifier-naming.EnumCase, value: CamelCase }
+  - { key: readability-identifier-naming.UnionCase, value: CamelCase }
+  - { key: readability-identifier-naming.TypedefCase, value: CamelCase }
+  - { key: readability-identifier-naming.FunctionCase, value: lower_case }
+  - { key: readability-identifier-naming.VariableCase, value: lower_case }
+  - { key: readability-identifier-naming.ParameterCase, value: lower_case }
+  - { key: readability-identifier-naming.MacroDefinitionCase, value: UPPER_CASE }
+  # Consts other than globals and enums are lower case.
+  - { key: readability-identifier-naming.EnumConstantCase, value: UPPER_CASE }
+  - { key: readability-identifier-naming.GlobalConstantCase, value: UPPER_CASE }
+  - { key: readability-identifier-naming.ConstantCase, value: lower_case }

@@ -10,9 +10,9 @@ https://opensource.org/license/mit/.
 #ifndef MESSAGES_H
 #define MESSAGES_H
 
-#define __PROGRAM_NAME__ "regexp"
-#define __PROGRAM_VERSION__ "1.0.0"
-#define __PROGRAM_AUTHOR__ "Lai-YT"
+#define PROGRAM_NAME "regexp"
+#define PROGRAM_VERSION "1.0.1"
+#define PROGRAM_AUTHOR "Lai-YT"
 
 void help();
 void usage();

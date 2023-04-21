@@ -18,7 +18,7 @@ https://opensource.org/license/mit/.
 
 int main(int argc, char* argv[]) {
   /* Read command line options */
-  options_t options;
+  Options options;
   options_parser(argc, argv, &options);
 
 #ifdef DEBUG
@@ -61,15 +61,13 @@ int main(int argc, char* argv[]) {
   bool matches_the_string = options.cache
                                 ? is_accepted_with_cache(nfa, options.string)
                                 : is_accepted(nfa, options.string);
+#ifdef DEBUG
   if (matches_the_string) {
-#ifdef DEBUG
     fprintf(stdout, YELLOW "The regexp matches the string.\n" NO_COLOR);
-#endif
   } else {
-#ifdef DEBUG
     fprintf(stdout, RED "The regexp doesn't match the string.\n" NO_COLOR);
-#endif
   }
+#endif
   delete_nfa(nfa);
   return matches_the_string ? EXIT_SUCCESS : EXIT_FAILURE;
 }

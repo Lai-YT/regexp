@@ -21,7 +21,7 @@ https://opensource.org/license/mit/.
 /*
  * Sets the default options
  */
-static void set_default_options(options_t* options) {
+static void set_default_options(Options* options) {
   options->help = false;
   options->version = false;
   options->cache = false;
@@ -34,7 +34,7 @@ static void set_default_options(options_t* options) {
 /*
  * Finds the matching case of the current command line option
  */
-void switch_options(int arg, options_t* options) {
+void switch_options(int arg, Options* options) {
   switch (arg) {
     case 'h':
       options->help = true;
@@ -74,7 +74,7 @@ void switch_options(int arg, options_t* options) {
   }
 }
 
-void get_regexp(int argc, char* argv[], options_t* options) {
+void get_regexp(int argc, char* argv[], Options* options) {
   if (optind < argc) {
     strncpy(options->regexp, argv[optind++], BUF_SIZE);
   } else {
@@ -83,7 +83,7 @@ void get_regexp(int argc, char* argv[], options_t* options) {
   }
 }
 
-void get_string(int argc, char* argv[], options_t* options) {
+void get_string(int argc, char* argv[], Options* options) {
   if (optind < argc) {
     strncpy(options->string, argv[optind++], BUF_SIZE);
   } else {
@@ -95,7 +95,7 @@ void get_string(int argc, char* argv[], options_t* options) {
 /*
  * Public function that loops until command line options were parsed
  */
-void options_parser(int argc, char* argv[], options_t* options) {
+void options_parser(int argc, char* argv[], Options* options) {
   set_default_options(options);
 
   int arg; /* Current option */

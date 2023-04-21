@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <stdbool.h>
-#include <stddef.h>  // size_t
+#include <stddef.h>
 #include <stdlib.h>
 
 #include "prime.h"
@@ -13,8 +13,8 @@ typedef struct MapPair {
 } MapPair;
 
 struct Map {
-  size_t capacity;
-  size_t size;
+  int capacity;
+  int size;
   MapPair** pairs;
 };
 
@@ -35,12 +35,12 @@ static void delete_map_pair(MapPair* item) {
   free(item);
 }
 
-static Map* create_map_with_capacity(size_t capacity) {
+static Map* create_map_with_capacity(int capacity) {
   Map* map = malloc(sizeof(Map));
   map->capacity = capacity;
   map->size = 0;
   // initialize to NULL, which means unused
-  map->pairs = calloc(map->capacity, sizeof *map->pairs);
+  map->pairs = calloc(map->capacity, sizeof(MapPair));
   return map;
 }
 
@@ -49,7 +49,7 @@ Map* create_map() {
 }
 
 void delete_map(Map* map) {
-  for (size_t i = 0; i < map->capacity; i++) {
+  for (int i = 0; i < map->capacity; i++) {
     if (map->pairs[i]) {
       delete_map_pair(map->pairs[i]);
       map->pairs[i] = NULL;
@@ -75,7 +75,7 @@ static int hash2(int n, int prime) {
 /// @brief A double hashing function that hashes the key into [0, capacity).
 /// @note Hashing is a large topic. This hash function is easy but may not be
 /// good.
-static int get_hashed_key(int key, size_t capacity, int attempt) {
+static int get_hashed_key(int key, int capacity, int attempt) {
   // the capacity we used is already a prime number
   int prime_1 = capacity;
   // a smaller prime in comparison with prime_1
@@ -84,7 +84,7 @@ static int get_hashed_key(int key, size_t capacity, int attempt) {
   return (hash1(key, prime_1) + hash2(key, prime_2) * attempt) % capacity;
 }
 
-static MapPair* PAIR_DELETED_MARKER = NULL;
+static MapPair* const PAIR_DELETED_MARKER = NULL;
 
 /// @return Whether the key of the pair is "key".
 /// @note Not null-safe.
@@ -121,7 +121,7 @@ static bool is_low_load(Map* map) {
 /// @note If the capacity is lower than MAP_BASE_CAPACITY, MAP_BASE_CAPACITY is
 /// used; if the capacity is not a prime number, the greater closet prime number
 /// is used.
-static void resize_map(Map* old, size_t capacity);
+static void resize_map(Map* old, int capacity);
 
 /// @details Double up the capacity if the map is under high load after the
 /// insertion.
@@ -159,7 +159,7 @@ void delete_pair(Map* map, int key) {
   }
 }
 
-static void resize_map(Map* old, size_t capacity) {
+static void resize_map(Map* old, int capacity) {
   if (capacity < MAP_BASE_CAPACITY) {
     capacity = MAP_BASE_CAPACITY;
   }
@@ -171,7 +171,7 @@ static void resize_map(Map* old, size_t capacity) {
   Map* new = create_map_with_capacity(capacity);
 
   // 2. Insert the pairs of the old map into the new map
-  for (size_t i = 0; i < old->capacity; i++) {
+  for (int i = 0; i < old->capacity; i++) {
     MapPair* item = old->pairs[i];
     if (item && item != PAIR_DELETED_MARKER) {
       insert_pair(new, item->key, item->val);
