@@ -106,6 +106,7 @@ help:
 	@echo "    tests    - Compiles with cmocka and runs test binary file"
 	@echo "    valgrind - Runs test binary file using valgrind tool"
 	@echo "    fmt      - Formats the source and test files"
+	@echo "    tidy     - Checks naming conventions and bug-proneness"
 	@echo "    clean    - Cleans the project by removing binaries"
 	@echo "    help     - Prints a help message with target rules"
 
