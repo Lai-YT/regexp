@@ -187,6 +187,7 @@ Target rules:
     tests    - Compiles with cmocka and runs test binary file
     valgrind - Runs test binary file using valgrind tool
     fmt      - Formats the source and test files
+    tidy     - Checks naming conventions and bug-proneness
     clean    - Cleans the project by removing binaries
     help     - Prints a help message with target rules
 ```
@@ -240,6 +241,14 @@ _regexp_ uses [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) as for
 Format source and test codes,
 ```shell
 $ make fmt
+```
+
+### Naming conventions & bug-proneness checking
+_regexp_ uses [Clang-Tidy](https://clang.llvm.org/extra/clang-tidy/) as the linter, which checks naming conventions and several bug-proneness.
+
+Check naming conventions and bug-proneness,
+```shell
+$ make tidy
 ```
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
