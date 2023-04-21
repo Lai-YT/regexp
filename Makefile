@@ -73,6 +73,9 @@ CFLAGS := $(STD) $(STACK) $(WARNS)
 DEBUG := -O0 -g3 -DDEBUG=1
 RELEASE := -O3
 
+# Flags for customizable format check, e.g., FMTFLAGS='--dry-run --Werror'
+FMTFLAGS := -i
+
 # Dependency libraries
 LIBS := -lm
 
@@ -148,8 +151,8 @@ valgrind:
 
 # Rule for formatting the source code with clang-format
 fmt:
-	@clang-format -i \
-		-style=file \
+	@clang-format -style=file \
+		$(FMTFLAGS) \
 		{$(SRCDIR),$(TESTDIR)}/*.{h,c}
 
 # Rule for enforcing naming conventions and checking proneness to bugs with clang-tidy
