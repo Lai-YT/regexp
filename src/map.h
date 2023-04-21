@@ -25,7 +25,7 @@ void delete_map(Map*);
 /// @note The val may or may not be heap-allocated since the map does
 /// not take the ownership. If val is heap allocated, the caller has to free it
 /// manually.
-void insert_pair(Map* ht, int key, void* val);
+void insert_pair(Map*, int key, void* val);
 
 /// @return The val mapped by key; NULL if not exists.
 void* get_value(Map*, int key);
@@ -64,14 +64,14 @@ void to_next(MapIterator*);
 /// macro.
 /// @note This macro creates an iterator object internally and deletes it after
 /// the iteration is complete.
-#define FOR_EACH_ITR(map, itr_name, statement)        \
-  {                                                   \
-    MapIterator* itr_name = create_map_iterator(map); \
-    while (has_next(itr_name)) {                      \
-      to_next(itr_name);                              \
-      statement;                                      \
-    }                                                 \
-    delete_map_iterator(itr_name);                    \
+#define FOR_EACH_ITR(map, itr_name, statement)         \
+  {                                                    \
+    MapIterator*(itr_name) = create_map_iterator(map); \
+    while (has_next(itr_name)) {                       \
+      to_next(itr_name);                               \
+      statement;                                       \
+    }                                                  \
+    delete_map_iterator(itr_name);                     \
   }
 
 #endif /* end of include guard: MAP_H */
