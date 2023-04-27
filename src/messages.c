@@ -30,7 +30,7 @@ void help() {
  */
 void usage() {
   fprintf(stdout, YELLOW "Usage: " NO_COLOR);
-  fprintf(stdout, "%s [-h] [-V] [-d regexp [-o FILE]] [[-c] regexp string]\n\n",
+  fprintf(stdout, "%s [-h] [-V] [-g regexp [-o FILE]] [[-c] regexp string]\n\n",
           PROGRAM_NAME);
 }
 
@@ -58,7 +58,7 @@ void graph_mode() {
       "  Converts the regular expression into a graph,\n"
       "  exits with 1 if regexp is ill-formed or the file can't be opened\n"
       "\n"
-      "  -d, --graph           Converts the NFA of the regexp into a Graphviz\n"
+      "  -g, --graph           Converts the NFA of the regexp into a Graphviz\n"
       "                        dot file (default: False)\n"
       "  -o FILE, --output FILE\n"
       "                        The name of the dot file.\n"

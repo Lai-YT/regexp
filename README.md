@@ -75,7 +75,7 @@ $ bin/regexp -h # or --help
 ```
 regexp
 
-Usage: regexp [-h] [-V] [-d regexp [-o FILE]] [[-c] regexp string]
+Usage: regexp [-h] [-V] [-g regexp [-o FILE]] [[-c] regexp string]
 
 Description: Regular expression implementation.
 Supports . ( ) | * + ?. No escapes.
@@ -94,7 +94,7 @@ Graph mode:
   Converts the regular expression into a graph,
   exits with 1 if regexp is ill-formed or the file can't be opened
 
-  -d, --graph           Converts the NFA of the regexp into a Graphviz
+  -g, --graph           Converts the NFA of the regexp into a Graphviz
                         dot file (default: False)
   -o FILE, --output FILE
                         The name of the dot file.
@@ -112,7 +112,7 @@ Match mode:
 
 Written by: Lai-YT
 
-regexp version: 1.0.0
+regexp version: 1.0.2
 ```
 
 ### Example
