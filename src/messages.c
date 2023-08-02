@@ -30,7 +30,7 @@ void help() {
  */
 void usage() {
   fprintf(stdout, YELLOW "Usage: " NO_COLOR);
-  fprintf(stdout, "%s [-h] [-V] [-g regexp [-o FILE]] [[-c] regexp string]\n\n",
+  fprintf(stdout, "%s [-h] [-V] {-g regexp [-o FILE] | [-c] regexp string}\n\n",
           PROGRAM_NAME);
 }
 
