@@ -75,13 +75,13 @@ $ bin/regexp -h # or --help
 ```
 regexp
 
-Usage: regexp [-h] [-V] [-g regexp [-o FILE]] [[-c] regexp string]
+Usage: regexp [-h] [-V] {-g regexp [-o FILE] | [-c] regexp string}
 
 Description: Regular expression implementation.
 Supports . ( ) | * + ?. No escapes.
 Compiles to NFA and then simulates NFA using Thompson's algorithm.
 
-One can either graph the regexp or match a string.
+One can either match a string (default) or graph the regexp.
 See the following options.
 Notice that character # can't appear in the regular expression,
 it's reserved technically as the special character.
@@ -89,6 +89,14 @@ it's reserved technically as the special character.
 Options:
   -h, --help            Shows this help message and exit
   -V, --version         Shows regexp version and exit
+
+Match mode:
+  Matches the string with the regular expression,
+  exits with 1 if regexp is ill-formed or it does not match
+
+  -c, --cache           Caches NFA states to build DFA on the fly
+  regexp                The regular expression to use on matching
+  string                The string to be matched
 
 Graph mode:
   Converts the regular expression into a graph,
@@ -101,14 +109,6 @@ Graph mode:
                         A .dot extension is appended automatically
                         (default: nfa)
   regexp                The regular expression to be converted
-
-Match mode:
-  Matches the string with the regular expression,
-  exits with 1 if regexp is ill-formed or it does not match
-
-  -c, --cache           Caches NFA states to build DFA on the fly
-  regexp                The regular expression to use on matching
-  string                The string to be matched
 
 Written by: Lai-YT
 
