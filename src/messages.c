@@ -44,7 +44,7 @@ void description() {
           "Supports . ( ) | * + ?. No escapes.\n"
           "Compiles to NFA and then simulates NFA using Thompson's algorithm.\n"
           "\n"
-          "One can either graph the regexp or match a string.\n"
+          "One can either match a string (default) or graph the regexp.\n"
           "See the following options.\n"
           "Notice that character # can't appear in the regular expression,\n"
           "it's reserved technically as the special character.\n"
@@ -91,8 +91,8 @@ void options() {
           "  -V, --version         Shows %s version and exit\n"
           "\n" NO_COLOR,
           PROGRAM_NAME);
-  graph_mode();
   match_mode();
+  graph_mode();
 }
 
 /*
