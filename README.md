@@ -50,7 +50,7 @@ The executable will be located in the `bin/` folder and named `regexp`.
 _regexp_ uses [cmocka](https://cmocka.org/) for unit-testing and [Valgrind](https://valgrind.org/) for detecting memory management bugs.
 
 - Run the unit tests
-```shell
+```console
 $ make tests
 ```
 - Check for memory-related bugs
@@ -58,7 +58,7 @@ $ make tests
 $ make valgrind
 ```
 - Run the command line tests
-```shell
+```console
 # Give permission on execution
 $ chmod +x cli_test.sh
 
@@ -68,7 +68,7 @@ $ ./cli_test.sh --release # --debug
 
 ## 🎈 Usage <a name="usage"></a>
 Get the help message,
-```shell
+```console
 $ bin/regexp -h # or --help
 ```
 
@@ -120,13 +120,13 @@ regexp version: 1.0.2
 #### Match mode
 This is the default mode. \
 _regexp_ takes two arguments: a regular expression and a string to match.
-```shell
+```console
 $ bin/regexp '(a|b)*abb' 'bababb'
 ```
 This exits with 0 if the string is matched by the regular expression or 1 if the regular expression is ill-formed or too long.
 
 You can check the exit code with the following command if you're on an Unix shell.
-```shell
+```console
 $ echo $?
 ```
 
@@ -135,7 +135,7 @@ $ echo $?
 
 _regexp_ doesn't cache the states by default. \
 Set the `--cache` (or `-c`) option to enable the caching.
-```shell
+```console
 $ bin/regexp -c '(a|b)*abb' 'bababb'
 ```
 
@@ -145,37 +145,37 @@ _regexp_ uses [Graphviz](https://graphviz.org/) to graph the NFA of a regular ex
 By setting the `--graph` (or `-g`) option, you can use the graph mode. This takes a single regular expression as an argument.
 
 - Convert the NFA of a regular expression into a DOT file,
-```shell
+```console
 $ bin/regexp --graph '(a|b)*abb'
 ```
 By default, the DOT file is written into `nfa.dot`.
 
 - You can also specify the output file with the `--output` (or `-o`) option, which takes a file as an argument.
-```shell
+```console
 $ bin/regexp --graph '(a|b)*abb' --output 'some/path/and/filename'
 ```
 This will then write the graph into `some/path/and/filename.dot`.
-> **Note**
+> [!note]
 > A `.dot` extension is always append to the you given.
 
 - After the DOT file is generated, you can convert it into a PNG image with Graphviz.
-```shell
-dot -Tpng nfa.dot -o nfa.png
+```console
+$ dot -Tpng nfa.dot -o nfa.png
 ```
 ![The NFA of "(a|b)*abb"](https://imgur.com/WCbGHDu.png)
-> **Note**
+> [!note]
 > The numbering of the states is related to the order of their creations.
 
 See the [command line documentation of Graphviz](https://graphviz.org/doc/info/command.html) to learn more.
 
 ## 🚀 Development <a name = "development"></a>
 Run _regex_ with debug messages and less optimizations (`-O0`).
-```shell
-make debug
+```console
+$ make debug
 ```
 
 There are several other *make targets* to use.
-```shell
+```console
 $ make help
 ```
 
@@ -232,14 +232,14 @@ regexp
 - `test/`: test files
 - `lib/`: object files
 - `log/`: output message of Valgrind
-> **Note**
+> [!note]
 > There aren't any prefix or postfix on the filename of test files.
 
 ### Code formatting
 _regexp_ uses [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) as formatting tool.
 
 Format source and test codes,
-```shell
+```console
 $ make fmt
 ```
 
@@ -247,7 +247,7 @@ $ make fmt
 _regexp_ uses [Clang-Tidy](https://clang.llvm.org/extra/clang-tidy/) as the linter, which checks naming conventions and several bug-proneness.
 
 Check naming conventions and bug-proneness,
-```shell
+```console
 $ make tidy
 ```
 
@@ -261,5 +261,5 @@ I would also like to thank Alfred Aho at el. for their excellent book on compile
 ## ✍️ License <a name = "license"></a>
 
 This project is licensed under the [MIT License](LICENSE). However, if any individual file within the project includes its own copyright claim, that claim should be respected and take precedence over the project-wide license.
-> **Note**
+> [!note]
 > They are still guaranteed to be licensed under the MIT License but with different authors.
