@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "map.h"
-#include "post2nfa.h"
+#include "nfa.h"
 #include "stack.h"
 
 /// @details The label of an epsilon transition is "eps", others are the
