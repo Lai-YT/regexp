@@ -50,5 +50,9 @@ void nfa2dot(const Nfa* nfa, FILE* f) {
   fprintf(f, "\tnode [shape = doublecircle]; %d;\n", nfa->accept->id);
   fputs("\tnode [shape = circle];\n", f);
   states2dot(nfa->start, f);
+  // Generate an in-arrow to the start state.
+  // The name is irrelevant since it won't be displayed.
+  fputs("\tstart [shape = none, label = \"\"];\n", f);
+  fprintf(f, "\tstart -> %d\n", nfa->start->id);
   fputs("}\n", f);
 }
