@@ -112,7 +112,7 @@ Graph mode:
 
 Written by: Lai-YT
 
-regexp version: 1.0.2
+regexp version: 1.0.3
 ```
 
 ### Example
