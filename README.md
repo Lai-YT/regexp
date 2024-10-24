@@ -112,7 +112,7 @@ Graph mode:
 
 Written by: Lai-YT
 
-regexp version: 1.0.2
+regexp version: 1.0.3
 ```
 
 ### Example
@@ -162,7 +162,7 @@ This will then write the graph into `some/path/and/filename.dot`.
 ```console
 $ dot -Tpng nfa.dot -o nfa.png
 ```
-![The NFA of "(a|b)*abb"](https://imgur.com/WCbGHDu.png)
+![The NFA of "(a|b)*abb"](https://imgur.com/aVNvEoK.png)
 > [!note]
 > The numbering of the states is related to the order of their creations.
 
