@@ -61,7 +61,8 @@ void switch_options(int arg, Options* options) {
         usage();
         exit(EXIT_FAILURE);
       }
-      strncpy(options->filename, optarg, BUF_SIZE);
+      strncpy(options->filename, optarg, BUF_SIZE - 1);
+      options->filename[BUF_SIZE - 1] = '\0';
       break;
 
     case '?':
@@ -77,6 +78,7 @@ void switch_options(int arg, Options* options) {
 void get_regexp(int argc, char* argv[], Options* options) {
   if (optind < argc) {
     strncpy(options->regexp, argv[optind++], BUF_SIZE);
+    options->regexp[BUF_SIZE - 1] = '\0';
   } else {
     usage();
     exit(EXIT_FAILURE);
@@ -86,6 +88,7 @@ void get_regexp(int argc, char* argv[], Options* options) {
 void get_string(int argc, char* argv[], Options* options) {
   if (optind < argc) {
     strncpy(options->string, argv[optind++], BUF_SIZE);
+    options->string[BUF_SIZE - 1] = '\0';
   } else {
     usage();
     exit(EXIT_FAILURE);
