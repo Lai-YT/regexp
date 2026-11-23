@@ -2,7 +2,7 @@
 
 <div align="center">
 
-  [![CI](https://github.com/Lai-YT/regexp/actions/workflows/build.yml/badge.svg)](https://github.com/Lai-YT/regexp/actions/workflows/build.yml)
+  [![CI](https://github.com/Lai-YT/regexp/actions/workflows/ci.yml/badge.svg)](https://github.com/Lai-YT/regexp/actions/workflows/ci.yml)
   [![Status](https://img.shields.io/badge/status-active-success.svg)]()
   [![GitHub Issues](https://img.shields.io/github/issues/lai-yt/regexp.svg)](https://github.com/lai-yt/regexp/issues)
   [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/lai-yt/regexp.svg)](https://github.com/lai-yt/regexp/pulls)
